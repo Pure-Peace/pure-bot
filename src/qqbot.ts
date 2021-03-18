@@ -17,7 +17,23 @@ export declare class MyWebSocket extends WebSocket {
 
 type handler = (ctx: MessageContext) => any;
 type afterHandler = (ctx: MessageContext, result: any) => any;
-type handleOptions = { where: string, filters: object, beforeChecker: handler, afterHandler: afterHandler };
+type serverOptions = { port?: number, deactive_timeout?: number };
+type handleFilters = {
+    prefixes?: Array<string>,
+    regexs?: Array<RegExp>,
+    keywords?: Array<string>,
+    include_qq?: Array<string | number>,
+    include_group?: Array<string | number>,
+    exclude_qq?: Array<string | number>,
+    exclude_group?: Array<string | number>
+};
+type handlerTask = {
+    handler: handler,
+    filters: handleFilters,
+    beforeChecker: handler,
+    afterHandler: afterHandler
+};
+type handleOptions = { where?: string, filters?: handleFilters, beforeChecker?: handler, afterHandler?: afterHandler };
 type events = {
     message: {
         common: Array<handler>,
@@ -110,7 +126,7 @@ export class QQbot {
     logUnhandledInfo: boolean;
     logHeartbeat: boolean;
     eventEmitter: EventEmitter;
-    defaultFilters: {};
+    globalFilters: handleFilters;
     loggerOptions: {};
     totalSend: number;
     totalRecive: number;
@@ -118,6 +134,8 @@ export class QQbot {
     status: {};
     events: events;
     initEventsMethod: (bot: QQbot) => void;
+    defaultHandleOptions: () => handleOptions;
+    defaultFilters: handleFilters;
     beforeHandleCheckers: ({ handler: handler } | {});
     afterHandlers: ({ handler: afterHandler } | {});
     server: WebSocket.Server;
@@ -133,12 +151,28 @@ export class QQbot {
         debug,
         serverOptions = { port: 8080, deactive_timeout: 5000 },
         eventAssigns = {},
-        defaultFilters = {},
+        customGlobalFilters = {},
         loggerOptions = {},
         beforeHandleCheckers = {},
         afterHandlers = {},
         initEventsMethod = (bot) => { }
+    }: {
+        name: string,
+        logName?: string,
+        logUnhandledInfo?: boolean,
+        logHeartbeat?: boolean,
+        debug?: boolean,
+        serverOptions?: serverOptions,
+        eventAssigns?: object,
+        customGlobalFilters?: object,
+        loggerOptions?: object,
+        beforeHandleCheckers?: object,
+        afterHandlers?: object,
+        initEventsMethod?: (bot: QQbot) => any
     }) {
+        this.defaultHandleOptions = () => { return { where: '', filters: this.globalFilters, beforeChecker: undefined, afterHandler: undefined } };
+        this.defaultFilters = { prefixes: [], regexs: [], keywords: [], include_qq: [], include_group: [], exclude_qq: [], exclude_group: [] };
+
         this.id = '?';
         this.name = name ?? 'default';
         this.logName = logName ?? 'QQBot';
@@ -147,7 +181,7 @@ export class QQbot {
         this.logUnhandledInfo = logUnhandledInfo ?? true;
         this.logHeartbeat = logHeartbeat ?? true;
         this.eventEmitter = new EventEmitter();
-        this.defaultFilters = defaultFilters ?? { prefixes: [], regexs: [], keywords: [], include_qq: [], include_group: [], exclude_qq: [], exclude_group: [] };
+        this.globalFilters = Object.assign(this.defaultFilters, customGlobalFilters ?? {});
 
         this.totalSend = 0;
         this.totalRecive = 0;
@@ -182,10 +216,10 @@ export class QQbot {
         });
     }
 
-    fastAddEventHandler (typeCheckIn: Array<string>, eventType: string, type: string, handler: object,
-        options: { where: string, filters: object, beforeChecker: handler, afterHandler: afterHandler }) {
-        let { where, filters, beforeChecker, afterHandler } = options;
-        const handlerTask = { handler, filters, beforeChecker, afterHandler };
+    fastAddEventHandler (typeCheckIn: Array<string>, eventType: string, type: string, handler: handler,
+        options: handleOptions) {
+        let { where, filters, beforeChecker, afterHandler } = Object.assign(this.defaultHandleOptions(), options);
+        const handlerTask: handlerTask = { handler, filters, beforeChecker, afterHandler };
 
         let extraTypes = '';
         const handlerChalked = `${chalk.yellowBright(eventType)}`;
@@ -242,25 +276,25 @@ export class QQbot {
 
     onMessage (type: ('common' | 'private' | 'group'),
         handler: handler,
-        options: handleOptions = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+        options: handleOptions = {}) {
         this.fastAddEventHandler(['common', 'private', 'group'], 'message', type, handler, options);
     }
 
     onNotice (type: ('common' | 'private' | 'group'),
         handler: handler,
-        options: handleOptions = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+        options: handleOptions = {}) {
         this.fastAddEventHandler(['common', 'private', 'group'], 'notice', type, handler, options);
     }
 
     onRequest (type: ('common' | 'friend' | 'group'),
         handler: handler,
-        options: handleOptions = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+        options: handleOptions = {}) {
         this.fastAddEventHandler(['common', 'friend', 'group'], 'request', type, handler, options);
     }
 
     onMetaEvent (type: ('common' | 'lifecycle' | 'heartbeat'),
         handler: handler,
-        options: handleOptions = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+        options: handleOptions = {}) {
         this.fastAddEventHandler(['common', 'lifecycle', 'heartbeat'], 'meta_event', type, handler, options);
     }
 
@@ -417,7 +451,7 @@ export class QQbot {
 
     async fastEventHandler ({
         taskList, tipString, time, ctx, type
-    }: { taskList: Array<any>, tipString: string, time: Duration, ctx: MessageContext, type: string }) {
+    }: { taskList: Array<handlerTask>, tipString: string, time: Duration, ctx: MessageContext, type: string }) {
         const isHeartbeat = ctx.msg.meta_event_type === 'heartbeat';
         const condi0 = !isHeartbeat &&
             (this.logUnhandledInfo && (!taskList || taskList.length === 0));
@@ -429,7 +463,7 @@ export class QQbot {
         }
 
         const partLog = (...msg) => this.debug && this.warn(...msg);
-        const readyTaskList = [];
+        const readyTaskList: Array<handler> = [];
         for (const t of taskList) {
             if (t.constructor === Object) {
                 if (!t.handler) {
@@ -487,7 +521,7 @@ export class QQbot {
 
                 // mixin after handler
                 if (t.afterHandler) {
-                    readyTaskList.push(async (ctx) => {
+                    readyTaskList.push(async (ctx: MessageContext) => {
                         const res = isAsyncFn(t.handler) ? await t.handler(ctx) : t.handler(ctx);
                         isAsyncFn(t.afterHandler) ? await t.afterHandler(ctx, res) : t.afterHandler(ctx, res);
                     });
@@ -495,7 +529,7 @@ export class QQbot {
                     readyTaskList.push(t.handler);
                 }
             } else {
-                readyTaskList.push(t);
+                readyTaskList.push(t as unknown as handler);
             }
         }
 
