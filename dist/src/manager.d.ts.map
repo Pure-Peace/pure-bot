@@ -1,0 +1,1 @@
+{"version":3,"file":"manager.d.ts","sourceRoot":"","sources":["../../src/manager.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAE,MAAM,OAAO,CAAC;AAE9B,qBAAa,UAAU;IACnB,IAAI,EAAE,KAAK,CAAC,KAAK,CAAC,CAAC;gBACN,OAAO,EAAE,KAAK,CAAC,KAAK,CAAC;CAWrC"}

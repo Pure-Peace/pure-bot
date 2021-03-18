@@ -9,7 +9,7 @@ const context_1 = require("./context");
 const utils_1 = require("./utils");
 const parse = require('fast-json-parse');
 class QQbot {
-    constructor({ name, logName, logUnhandledInfo, logHeartbeat, debug, serverOptions = { port: 8080, deactive_timeout: 5000 }, eventAssigns = {}, defaultFilters = {}, loggerOptions = {}, beforeHandleCheckers = {}, afterHandlers = {}, initEventsMethod = (bot) => { } }) {
+    constructor({ name, logName, logUnhandledInfo, logHeartbeat, debug, serverOptions = { port: 8080, deactive_timeout: 5000 }, eventAssigns = {}, customGlobalFilters = {}, loggerOptions = {}, beforeHandleCheckers = {}, afterHandlers = {}, initEventsMethod = (bot) => { } }) {
         this.eventHandlers = {
             message: async (ctx) => {
                 const msg = ctx.msg;
@@ -88,6 +88,8 @@ class QQbot {
                 });
             }
         };
+        this.defaultHandleOptions = () => { return { where: '', filters: this.globalFilters, beforeChecker: undefined, afterHandler: undefined }; };
+        this.defaultFilters = { prefixes: [], regexs: [], keywords: [], include_qq: [], include_group: [], exclude_qq: [], exclude_group: [] };
         this.id = '?';
         this.name = name ?? 'default';
         this.logName = logName ?? 'QQBot';
@@ -96,7 +98,7 @@ class QQbot {
         this.logUnhandledInfo = logUnhandledInfo ?? true;
         this.logHeartbeat = logHeartbeat ?? true;
         this.eventEmitter = new events_1.EventEmitter();
-        this.defaultFilters = defaultFilters ?? { prefixes: [], regexs: [], keywords: [], include_qq: [], include_group: [], exclude_qq: [], exclude_group: [] };
+        this.globalFilters = Object.assign(this.defaultFilters, customGlobalFilters ?? {});
         this.totalSend = 0;
         this.totalRecive = 0;
         this.lastRecived = -1;
@@ -126,7 +128,7 @@ class QQbot {
         });
     }
     fastAddEventHandler(typeCheckIn, eventType, type, handler, options) {
-        let { where, filters, beforeChecker, afterHandler } = options;
+        let { where, filters, beforeChecker, afterHandler } = Object.assign(this.defaultHandleOptions(), options);
         const handlerTask = { handler, filters, beforeChecker, afterHandler };
         let extraTypes = '';
         const handlerChalked = `${chalk.yellowBright(eventType)}`;
@@ -183,16 +185,16 @@ class QQbot {
         }
         this.error(`error when add handler, 'where' of '${handlerChalked}' type '${type}' must in [${Object.keys(e[type])}]${extraTypes || ''}, got '${where}'.`);
     }
-    onMessage(type, handler, options = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+    onMessage(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'private', 'group'], 'message', type, handler, options);
     }
-    onNotice(type, handler, options = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+    onNotice(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'private', 'group'], 'notice', type, handler, options);
     }
-    onRequest(type, handler, options = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+    onRequest(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'friend', 'group'], 'request', type, handler, options);
     }
-    onMetaEvent(type, handler, options = { where: '', filters: this.defaultFilters, beforeChecker: undefined, afterHandler: undefined }) {
+    onMetaEvent(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'lifecycle', 'heartbeat'], 'meta_event', type, handler, options);
     }
     onLifecycle(lifecycle, handler) {
@@ -305,19 +307,24 @@ class QQbot {
         return defaultEvents;
     }
     async handleMessage(msg, ws) {
+        // update recive
         ws.heartBeat();
         this.totalRecive += 1;
         this.lastRecived = new Date().getTime();
+        // parse data
         const parseResult = parse(msg);
         if (parseResult.err) {
             this.error('message parse error:', parseResult.err);
             return;
         }
         msg = parseResult.value;
+        // build context
         const ctx = new context_1.MessageContext(msg, ws, this);
+        // do before check
         if (!this.beforeHandleCheck(ctx)) {
             return;
         }
+        // handle event
         const event = msg.post_type;
         const handler = this.eventHandlers[event];
         if (handler) {
@@ -347,45 +354,55 @@ class QQbot {
                     this.warn('fastEventHandler: have not handler. message:', ctx.msg);
                     continue;
                 }
+                // filters
                 if (t.filters) {
                     const f = t.filters;
                     const checkIsList = (obj) => {
                         return obj && obj.constructor === Array && obj.length > 0;
                     };
+                    // exclude qq
                     if (checkIsList(f.exclude_qq) && f.exclude_qq.includes(ctx.sender_id)) {
                         partLog('filters: exclude qq check blocked.');
                         continue;
                     }
+                    // exclude qq group
                     if (checkIsList(f.exclude_group) && f.exclude_group.includes(ctx.group_id)) {
                         partLog('filters: exclude qq group check blocked.');
                         continue;
                     }
+                    // include qq
                     if (checkIsList(f.include_qq) && !f.include_qq.includes(ctx.sender_id)) {
                         partLog('filters: include qq check blocked.');
                         continue;
                     }
+                    // include qq group
                     if (checkIsList(f.include_group) && !f.include_group.includes(ctx.group_id)) {
                         partLog('filters: include qq group check blocked.');
                         continue;
                     }
+                    // prefixes
                     if (checkIsList(f.prefixes) && f.prefixes.filter(prefix => ctx.raw_message.startsWith(prefix)).length === 0) {
                         partLog('filters: prefixes check blocked.');
                         continue;
                     }
+                    // include key words
                     if (checkIsList(f.keywords) && f.keywords.filter(keyword => ctx.raw_message.includes(keyword)).length === 0) {
                         partLog('filters: keywords check blocked.');
                         continue;
                     }
+                    // regexs
                     if (checkIsList(f.regexs) && f.regexs.filter(regex => regex.test(ctx.raw_message)).length === 0) {
                         partLog('filters: regexs check blocked.');
                         continue;
                     }
                 }
+                // before checker
                 if (t.beforeChecker &&
                     (utils_1.isAsyncFn(t.beforeChecker) ? await t.beforeChecker(ctx) : t.beforeChecker(ctx)) === false) {
                     partLog('fastEventHandler: before checker blocked.');
                     continue;
                 }
+                // mixin after handler
                 if (t.afterHandler) {
                     readyTaskList.push(async (ctx) => {
                         const res = utils_1.isAsyncFn(t.handler) ? await t.handler(ctx) : t.handler(ctx);

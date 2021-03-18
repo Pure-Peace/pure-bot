@@ -4,6 +4,7 @@ exports.showMemoryUsage = exports.getFormattedMemoryUsage = exports.getMemoryUsa
 const chalk = require('chalk');
 const prettyBytes = require('pretty-bytes');
 function getMemoryUsage() {
+    // https://nodejs.org/api/process.html#process_process_memoryusage
     const { heapUsed, rss } = process.memoryUsage();
     return { heap: heapUsed, rss };
 }

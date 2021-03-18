@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.showBanner = void 0;
+/* eslint-disable no-unused-vars */
 const chalk = require('chalk');
 const { successBox } = require('./formatting');
 const { getFormattedMemoryUsage } = require('./memory');
@@ -16,13 +17,20 @@ function showBanner(options, showMemoryUsage = true) {
     const titleLines = [];
     const messageLines = [];
     titleLines.push(`${chalk[opt.bannerColor].bold(opt.banner)}\n`);
+    // Name and version
     titleLines.push(`${chalk[opt.bannerColor].bold(opt.name)} @ v${opt.version}\n`);
     const label = name => chalk.bold.cyan(`▸ ${name}:`);
+    // Environment
     titleLines.push(`${label('Node')}        v${process.env.npm_config_node_version}`);
     titleLines.push(`${label('Environment')} ${process.env.NODE_ENV}`);
     if (showMemoryUsage) {
         titleLines.push('\n' + getFormattedMemoryUsage());
     }
+    // Listeners
+    /* messageLines.push(
+    chalk.bold(`${chalk.green('△')} Listening: `) + chalk.underline.blue(`http://${opt.host}:${opt.port}`)
+  ) */
+    // Add custom messages
     if (opt.messages.length) {
         messageLines.push('', ...opt.messages);
     }
