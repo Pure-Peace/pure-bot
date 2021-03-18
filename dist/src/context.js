@@ -21,6 +21,11 @@ class MessageContext {
         this.group_id = msg.group_id;
         this.time = msg.time;
     }
+    /**
+     * 快速回复
+     * @param {any} message - 回复的消息，可以是任意格式。
+     * @param {boolean} auto_escape - 不解析消息内容
+     */
     fastReply(message, auto_escape = false) {
         if (this.group_id) {
             return this.client.sendGroupMsg({ group_id: this.group_id, message, auto_escape });
@@ -32,4 +37,3 @@ class MessageContext {
     }
 }
 exports.MessageContext = MessageContext;
-//# sourceMappingURL=context.js.map

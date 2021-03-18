@@ -15,4 +15,3 @@ class BotManager {
 }
 exports.BotManager = BotManager;
 ;
-//# sourceMappingURL=manager.js.map

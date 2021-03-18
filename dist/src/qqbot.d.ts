@@ -7,6 +7,7 @@ export declare class MyWebSocket extends WebSocket {
     heartBeat: () => void;
     pingTimeout: NodeJS.Timeout;
     alive: boolean;
+    sendJson: (data: any) => void;
 }
 declare type handler = (ctx: MessageContext) => any;
 declare type afterHandler = (ctx: MessageContext, result: any) => any;

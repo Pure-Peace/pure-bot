@@ -11,4 +11,3 @@ const context_1 = require("./src/context");
 Object.defineProperty(exports, "MessageContext", { enumerable: true, get: function () { return context_1.MessageContext; } });
 const utils = require("./src/utils");
 exports.utils = utils;
-//# sourceMappingURL=index.js.map

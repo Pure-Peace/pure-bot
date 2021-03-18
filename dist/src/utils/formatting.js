@@ -73,4 +73,3 @@ function fatalBox(message, title) {
     return errorBox(message, title || chalk.red('✖ Fatal Error'));
 }
 exports.fatalBox = fatalBox;
-//# sourceMappingURL=formatting.js.map

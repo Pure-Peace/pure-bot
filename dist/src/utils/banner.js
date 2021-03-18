@@ -37,4 +37,3 @@ function showBanner(options, showMemoryUsage = true) {
     process.stdout.write(successBox(messageLines.join('\n'), titleLines.join('\n')));
 }
 exports.showBanner = showBanner;
-//# sourceMappingURL=banner.js.map

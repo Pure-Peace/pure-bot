@@ -18,4 +18,3 @@ function showMemoryUsage() {
     console.info(getFormattedMemoryUsage());
 }
 exports.showMemoryUsage = showMemoryUsage;
-//# sourceMappingURL=memory.js.map

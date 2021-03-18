@@ -8,6 +8,7 @@ const dayjs = require("dayjs");
 const context_1 = require("./context");
 const utils_1 = require("./utils");
 const parse = require('fast-json-parse');
+const stringify = require('fast-json-stable-stringify');
 class QQbot {
     constructor({ name, logName, logUnhandledInfo, logHeartbeat, debug, serverOptions = { port: 8080, deactive_timeout: 5000 }, eventAssigns = {}, customGlobalFilters = {}, loggerOptions = {}, beforeHandleCheckers = {}, afterHandlers = {}, initEventsMethod = (bot) => { } }) {
         this.eventHandlers = {
@@ -115,6 +116,9 @@ class QQbot {
         this.server = new WebSocket.Server(options);
         this.info(chalk.yellowBright(`started, waiting for ws connect... (port: ${options.port})`));
         this.server.on('connection', async (ws) => {
+            ws.sendJson = (data) => {
+                ws.send(stringify(data));
+            };
             ws.heartBeat = () => {
                 clearTimeout(ws.pingTimeout);
                 ws.pingTimeout = setTimeout(() => {
@@ -503,4 +507,3 @@ class QQbot {
     }
 }
 exports.QQbot = QQbot;
-//# sourceMappingURL=qqbot.js.map

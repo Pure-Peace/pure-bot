@@ -43,4 +43,3 @@ const isAsyncFn = (func) => {
     return func.constructor.name === 'AsyncFunction';
 };
 exports.isAsyncFn = isAsyncFn;
-//# sourceMappingURL=index.js.map

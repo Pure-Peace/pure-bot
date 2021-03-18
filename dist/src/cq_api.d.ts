@@ -6,6 +6,12 @@ export declare class CqApi {
     safeXml(str: string): string;
     sendJson(data: any): void;
     send(data: any): void;
+    /**
+     * CQApi 调用，返回promise
+     * @param {string} action - 要调用的api端点
+     * @param {object} params - 参数
+     * @param {number} timeout - 超时时间（ms）
+     */
     apiCall(action: string, params?: {}, timeout?: number): Promise<unknown>;
     /**
      * 发送消息 / send_msg
