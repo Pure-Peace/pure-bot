@@ -1,6 +1,6 @@
 {
   "name": "pure-bot",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Easy-to-use QQ bot. Based on onebot, and websocket)",
   "keywords": [
     "node.js",
