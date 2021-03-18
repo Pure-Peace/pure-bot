@@ -103,3 +103,16 @@ bot.onMessage('group', async (ctx) => {
 bot.onNotice('private', async (ctx) => {
     console.info(ctx.msg.raw_message, 'notice666');
 });
+
+// 注册一个群聊消息处理
+bot.onMessage('group', async (ctx) => {
+    bot.info('收到群聊消息：', ctx.raw_message);
+    // 使用ctx.client 调用 CQ Api
+    // 这是获取群聊信息
+    try {
+        const result = await ctx.client.getTargetGroupInfo({ group_id: ctx.group_id });
+        bot.info('成功获取群聊消息：', result);
+    } catch (err) {
+        bot.error('获取群聊信息失败，错误：', err);
+    }
+});
