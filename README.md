@@ -69,7 +69,7 @@ bot.onMessage('private', async (ctx) => {
 
 支持 [onebot](https://github.com/howmanybots/onebot/blob/master/v11/specs/README.md) 协议制定的事件，共四种：
 
-- [消息事件 (message)](https://github.com/howmanybots/onebot/blob/master/v11/specs/event/README.md)
+- [消息事件 (message)](https://github.com/howmanybots/onebot/blob/master/v11/specs/event/message.md)
   
 - [通知事件 (notice)](https://github.com/howmanybots/onebot/blob/master/v11/specs/event/notice.md)
   
@@ -89,12 +89,12 @@ bot.onMetaEvent (type: ('common' | 'lifecycle' | 'heartbeat'), handler: (AsyncFu
 bot.onLifecycle (lifecycle: ('connect' | 'enable' | 'disable'), handler: (AsyncFunction | Function));
 ```
 
-- 参数 **handleOptions**：**每种事件有不同的类型，common代表所有类型。**
+- 参数 **type**：**每种事件有不同的类型，common代表所有类型。**
 - 参数 **handler**：**处理方法**，可传入异步方法(`AsyncFunction`)，也可传入普通方法，处理方法需要接收一个**上下文**(`MessageContext`)作为参数。
-- 参数 **handleOptions**：**处理选项**，可定义过滤器 `filters`，也可以添加钩子（执行前处理函数、执行后处理函数）。
+- 参数 **options**：**处理选项**，可定义过滤器 `filters`，也可以添加钩子（执行前处理函数、执行后处理函数）。
 
-**关于上下文 `MessageContext` （ctx）的内容，可以查看源代码文件：[context.ts](https://github.com/Pure-Peace/pure-bot/blob/main/src/context.ts)**
-**关于 `handleOptions` 东西有点多，将在后面的示例中细讲。**
+**关于上下文 `MessageContext` （ctx）的内容，可以查看源代码文件：[context.ts](https://github.com/Pure-Peace/pure-bot/blob/main/src/context.ts)**，或者[点这里看](https://github.com/Pure-Peace/pure-bot#%E6%9B%B4%E5%A4%9A%E7%9A%84api)
+**关于 `options` 东西有点多，请直接查看下面的完整示例，有注释。**
 
 事件类型总结：
 
