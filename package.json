@@ -1,0 +1,57 @@
+{
+  "name": "pure-bot",
+  "version": "0.0.1",
+  "description": "Easy-to-use QQ bot. Based on onebot, and websocket)",
+  "keywords": [
+    "node.js",
+    "javascript",
+    "bot",
+    "qq",
+    "onebot",
+    "websocket",
+    "ws"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pure-Peace/pure-bot"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "go": "cross-env NODE_ENV=development nodemon --config nodemon.json",
+    "start": "cross-env NODE_ENV=production nodemon --config nodemon.json",
+    "lint": "eslint --ext .js,.ts,.tsx test/ src/"
+  },
+  "author": "Pure-Peace",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/ws": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.22.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.3.1",
+    "fast-json-parse": "^1.0.3",
+    "fast-json-stable-stringify": "^2.1.0",
+    "nodemon": "^2.0.7",
+    "teleport-javascript": "^1.0.0",
+    "typescript": "^4.2.3"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.3"
+  },
+  "dependencies": {
+    "boxen": "^4.2.0",
+    "chalk": "^3.0.0",
+    "dayjs": "^1.10.4",
+    "nanoid": "^3.1.22",
+    "pretty-bytes": "^5.6.0",
+    "wrap-ansi": "^7.0.0",
+    "ws": "^7.4.4"
+  }
+}
