@@ -31,6 +31,12 @@ export class CqApi {
         this.ws.send(data);
     }
 
+    /**
+     * CQApi 调用，返回promise
+     * @param {string} action - 要调用的api端点
+     * @param {object} params - 参数
+     * @param {number} timeout - 超时时间（ms）
+     */
     apiCall (action: string, params = {}, timeout = 5000) {
         return new Promise((resolve, reject) => {
             const randId = `apicall:${nanoid()}`;

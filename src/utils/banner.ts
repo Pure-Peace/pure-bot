@@ -9,7 +9,7 @@ const {
 
 const isDev = process.env.NODE_ENV === 'development';
 
-function showBanner (options, showMemoryUsage = true) {
+function showBanner (options?, showMemoryUsage = true) {
     const opt = Object.assign({
         banner: '',
         messages: [],

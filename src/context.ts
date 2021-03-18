@@ -17,7 +17,7 @@ export class MessageContext {
     raw_message: string;
     message_id: number;
     is_group: boolean;
-    group_id: any;
+    group_id?: number;
     time: any;
     constructor (msg: any, ws: MyWebSocket, bot: QQbot) {
         this.msg = msg;
@@ -43,7 +43,12 @@ export class MessageContext {
         this.time = msg.time;
     }
 
-    fastReply (message, auto_escape = false) {
+    /**
+     * 快速回复
+     * @param {any} message - 回复的消息，可以是任意格式。
+     * @param {boolean} auto_escape - 不解析消息内容
+     */
+    fastReply (message: any, auto_escape: boolean = false) {
         if (this.group_id) {
             return this.client.sendGroupMsg({ group_id: this.group_id, message, auto_escape });
         }

@@ -8,11 +8,13 @@ import * as dayjs from 'dayjs';
 import { MessageContext } from './context';
 import { Duration, isAsyncFn } from './utils';
 const parse = require('fast-json-parse');
+const stringify = require('fast-json-stable-stringify');
 
 export declare class MyWebSocket extends WebSocket {
     heartBeat: () => void;
     pingTimeout: NodeJS.Timeout;
     alive: boolean;
+    sendJson: (data: any) => void;
 }
 
 type handler = (ctx: MessageContext) => any;
@@ -203,6 +205,9 @@ export class QQbot {
         this.info(chalk.yellowBright(`started, waiting for ws connect... (port: ${options.port})`));
 
         this.server.on('connection', async (ws: MyWebSocket) => {
+            ws.sendJson = (data) => {
+                ws.send(stringify(data));
+            };
             ws.heartBeat = () => {
                 clearTimeout(ws.pingTimeout);
                 ws.pingTimeout = setTimeout(() => {
