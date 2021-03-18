@@ -1,6 +1,6 @@
 {
   "name": "pure-bot",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Easy-to-use QQ bot. Based on onebot, and websocket)",
   "keywords": [
     "node.js",
@@ -22,7 +22,8 @@
   "scripts": {
     "go": "cross-env NODE_ENV=development nodemon --config nodemon.json",
     "start": "cross-env NODE_ENV=production nodemon --config nodemon.json",
-    "lint": "eslint --ext .js,.ts,.tsx test/ src/"
+    "lint": "eslint --ext .js,.ts,.tsx test/ src/",
+    "publish": "git push && npm publish"
   },
   "author": "Pure-Peace",
   "license": "MIT",
