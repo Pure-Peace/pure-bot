@@ -13,7 +13,7 @@
         "noImplicitAny": false,
         "outDir": "./dist",
         "removeComments": false,
-        "sourceMap": true,
+        "sourceMap": false,
         "target": "ESNext",
         "typeRoots": [
             "node_modules/@types"
