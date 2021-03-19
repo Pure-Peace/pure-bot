@@ -744,6 +744,17 @@ export class QQbot {
         return this.onMessage('private', handler, ...args);
     }
 
+    // shortcuts for message
+    onPublicMessage (handler, option) {
+        // this.onMessage('group', handler, ...args);
+        return this.fastAddEventHandler(['common', 'private', 'group', 'channel'], 'message', 'common', handler, option);
+    }
+
+    // shortcuts for message
+    onGroupMessage (handler, ...args) {
+        return this.onMessage('group', handler, ...args);
+    }
+
     async initPlugin (plugin: Plugin, options = {}) {
         // init plugin
         const namespace = await plugin.namespace(options);

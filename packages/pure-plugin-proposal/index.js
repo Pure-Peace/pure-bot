@@ -40,13 +40,13 @@ module.exports = {
             console.debug('unmanaged onPrivateMessage hook message', ctx.raw_message);
         },
         onPublicMessage (ctx, namespace) {
-            console.debug('unmanaged onPublicMessage hook recived message (includes channel message (irc, khl, discord) and group message (onebot))', ctx);
+            console.debug('unmanaged onPublicMessage hook recived message (includes channel message (irc, khl, discord) and group message (onebot))', ctx.raw_message);
         },
         onChannelMessage (ctx, namespace) {
-            console.debug('unmanaged onChannelMessage hook recived message (irc, khl, discord)');
+            console.debug('unmanaged onChannelMessage hook recived message (irc, khl, discord)', ctx.raw_message);
         },
         onGroupMessage (ctx, namespace) {
-            console.debug('unmanaged onGroupMessage hook recived message (irc, khl, discord)');
+            console.debug('unmanaged onGroupMessage hook recived message (irc, khl, discord)', ctx.raw_message);
         }
     },
     database: {

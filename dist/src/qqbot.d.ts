@@ -205,6 +205,8 @@ export declare class QQbot {
     }): string;
     get clientCount(): number;
     onPrivateMessage(handler: any, ...args: any[]): void;
+    onPublicMessage(handler: any, option: any): void;
+    onGroupMessage(handler: any, ...args: any[]): void;
     initPlugin(plugin: Plugin, options?: {}): Promise<{
         namespace: any;
         messageHandler: CallableFunction;
