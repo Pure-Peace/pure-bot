@@ -1,31 +1,30 @@
-// const middleware1 = (ctx, next) => {
-//     console.log('processed at 1', ctx);
-//     if (ctx.yes) next();
-// };
+const createChain = require('./index');
 
-// const middleware2 = (ctx, next) => {
-//     console.log('processed at 2');
-// };
-
-const createChain = (...processors) => {
-    const onMessage = (...args) => processors.reduce(async (next, middleware) => {
-        next = await next;
-        if (!next) return;
-        next = false;
-        const nextFunction = () => { next = true };
-        await middleware(...args, nextFunction);
-        console.log(next);
-        return next;
-    }, true);
-
-    return onMessage;
+const middleware1 = (ctx, next) => {
+    console.log('processed at 1', ctx);
+    if (ctx.nextFrom1) next();
 };
 
-module.exports = (...processors) => createChain(...middlewares);
+const middleware2 = (ctx, next) => {
+    console.log('processed at 2');
+    if (ctx.tempMiddleware) {
+        return next((ctx, next) => {
+            console.log('processed at 2, temp middleware');
+            next(() => {
+                console.log('processed at 2, temp middleware, temp middleware');
+            });
+        });
+    } else return next();
+};
 
-// const middlewares = [middleware1, middleware2];
+const middleware3 = (ctx, next) => {
+    console.log('processed at 3');
+};
 
-// const processor = createOnMessage(...middlewares);
+const middlewares = [middleware1, middleware2, middleware3];
 
-// processor({ yes: true });
-// processor({});
+const processor = createChain(...middlewares);
+
+processor({ nextFrom1: true });
+processor({ tempMiddleware: true, nextFrom1: true });
+processor({});
