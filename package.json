@@ -22,6 +22,7 @@
   "scripts": {
     "go": "cross-env NODE_ENV=development nodemon --config nodemon.json",
     "start": "cross-env NODE_ENV=production nodemon --config nodemon.json",
+    "installTest": "cross-env NODE_ENV=production nodemon --config installPlugin.json",
     "lint": "eslint --ext .js,.ts,.tsx test/ src/",
     "publish": "git push && npm publish"
   },
@@ -54,5 +55,10 @@
     "pretty-bytes": "^5.6.0",
     "wrap-ansi": "^7.0.0",
     "ws": "^7.4.4"
-  }
+  },
+  "workspaces": [
+    "packages/adapter-koishi-plugin",
+    "packages/chain-of-responsibility",
+    "packages/pure-plugin-proposal"
+  ]
 }

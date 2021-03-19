@@ -9,6 +9,12 @@ export declare class MyWebSocket extends WebSocket {
     alive: boolean;
     sendJson: (data: any) => void;
 }
+declare type PluginHookHandler = (ctx: MessageContext, namespace: any) => void;
+interface Plugin {
+    create: (options: any, namespace: any) => CallableFunction;
+    namespace: (options: any) => any;
+    hooks: Record<string, PluginHookHandler>;
+}
 declare type handler = (ctx: MessageContext) => any;
 declare type afterHandler = (ctx: MessageContext, result: any) => any;
 declare type serverOptions = {
@@ -132,6 +138,7 @@ export declare class QQbot {
     totalSend: number;
     totalRecive: number;
     lastRecived: number;
+    plugins: Map<any, any>;
     status: {};
     events: events;
     initEventsMethod: (bot: QQbot) => void;
@@ -171,6 +178,7 @@ export declare class QQbot {
     onLifecycle(lifecycle: ('connect' | 'enable' | 'disable'), handler: handler): void;
     defaultEvents(eventAssigns: Object): events;
     handleMessage(msg: any, ws: MyWebSocket): Promise<void>;
+    fakeMessage(event: any): Promise<void>;
     fastEventHandler({ taskList, tipString, time, ctx, type }: {
         taskList: Array<handlerTask>;
         tipString: string;
@@ -196,6 +204,15 @@ export declare class QQbot {
         level?: string;
     }): string;
     get clientCount(): number;
+    onPrivateMessage(handler: any, ...args: any[]): void;
+    onPublicMessage(handler: any, option: any): void;
+    onGroupMessage(handler: any, ...args: any[]): void;
+    initPlugin(plugin: Plugin, options?: {}): Promise<{
+        namespace: any;
+        messageHandler: CallableFunction;
+    }>;
+    use(plugin: Plugin): Promise<void>;
+    start(): void;
 }
 export {};
 //# sourceMappingURL=qqbot.d.ts.map
