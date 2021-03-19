@@ -1,4 +1,4 @@
-const createChain = (...processors) => {
+const createChain = (processors) => {
     const onMessage = async (...args) => {
         const tempMiddlewares = [];
 
@@ -25,4 +25,4 @@ const createChain = (...processors) => {
     return onMessage;
 };
 
-module.exports = (...processors) => createChain(...processors);
+module.exports = (processors) => createChain(processors);

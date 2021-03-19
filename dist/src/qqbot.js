@@ -551,10 +551,10 @@ class QQbot {
     }
     async use(plugin) {
         const pluginCtx = await this.initPlugin(plugin);
-        this.plugins.set(plugin, pluginCtx);
+        this.plugins.set(Math.random(), pluginCtx);
     }
     start() {
-        this.onMessage('common', createChain(...Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
+        this.onMessage('common', createChain(Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
     }
 }
 exports.QQbot = QQbot;

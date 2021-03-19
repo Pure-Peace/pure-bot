@@ -26,6 +26,10 @@ const fakeMessage = (msg) => ({
 
 (async () => {
     await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
     await bot.start();
 
     bot.fakeMessage(fakeMessage('hi'));
