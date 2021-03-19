@@ -1,6 +1,6 @@
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.memory = exports.formatting = exports.showBanner = exports.isAsyncFn = exports.Duration = void 0;
+exports.memory = exports.formatting = exports.delay = exports.showBanner = exports.isAsyncFn = exports.Duration = void 0;
 const banner_1 = require("./banner");
 Object.defineProperty(exports, "showBanner", { enumerable: true, get: function () { return banner_1.showBanner; } });
 const formatting = require('./formatting');
@@ -43,3 +43,11 @@ const isAsyncFn = (func) => {
     return func.constructor.name === 'AsyncFunction';
 };
 exports.isAsyncFn = isAsyncFn;
+const delay = (duration) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(true);
+        }, duration);
+    });
+};
+exports.delay = delay;

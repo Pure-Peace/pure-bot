@@ -44,10 +44,19 @@ const isAsyncFn = (func) => {
     return func.constructor.name === 'AsyncFunction';
 };
 
+const delay = (duration: number) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(true);
+        }, duration);
+    });
+};
+
 export {
     Duration,
     isAsyncFn,
     showBanner,
+    delay,
     formatting,
     memory
 };

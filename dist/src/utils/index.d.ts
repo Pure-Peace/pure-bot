@@ -13,5 +13,6 @@ declare class Duration {
     format(): string;
 }
 declare const isAsyncFn: (func: any) => boolean;
-export { Duration, isAsyncFn, showBanner, formatting, memory };
+declare const delay: (duration: number) => Promise<unknown>;
+export { Duration, isAsyncFn, showBanner, delay, formatting, memory };
 //# sourceMappingURL=index.d.ts.map
