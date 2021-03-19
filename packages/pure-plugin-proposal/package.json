@@ -1,0 +1,11 @@
+{
+  "name": "pure-plugin-proposal",
+  "version": "1.0.0",
+  "description": "plugin format proposal",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "arily",
+  "license": "MIT"
+}

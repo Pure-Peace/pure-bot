@@ -7,14 +7,24 @@ import * as dayjs from 'dayjs';
 
 import { MessageContext } from './context';
 import { Duration, isAsyncFn } from './utils';
+
 const parse = require('fast-json-parse');
 const stringify = require('fast-json-stable-stringify');
+const createChain = require('chain-of-responsibility');
 
 export declare class MyWebSocket extends WebSocket {
     heartBeat: () => void;
     pingTimeout: NodeJS.Timeout;
     alive: boolean;
     sendJson: (data: any) => void;
+}
+
+type PluginHookHandler = (ctx: MessageContext, namespace: any) => void
+
+interface Plugin {
+    create: (options: any, namespace: any) => CallableFunction;
+    namespace: (options: any) => any;
+    hooks: Record<string, PluginHookHandler>
 }
 
 type handler = (ctx: MessageContext) => any;
@@ -133,6 +143,7 @@ export class QQbot {
     totalSend: number;
     totalRecive: number;
     lastRecived: number;
+    plugins: Map<any, any>;
     status: {};
     events: events;
     initEventsMethod: (bot: QQbot) => void;
@@ -198,6 +209,8 @@ export class QQbot {
         this.loggerize(loggerOptions);
         this.initEventsMethod(this);
         this.initServer(serverOptions);
+
+        this.plugins = new Map();
     }
 
     initServer (options) {
@@ -452,6 +465,15 @@ export class QQbot {
         } else {
             this.warn('Unhandled event:', event, '; msg:', msg);
         }
+    }
+
+    async fakeMessage (event) {
+        return this.handleMessage(JSON.stringify(event), {
+            heartBeat () {},
+            sendJson (json) {
+                this.info('fake message replied:', JSON.parse(json));
+            }
+        } as MyWebSocket);
     }
 
     async fastEventHandler ({
@@ -715,5 +737,54 @@ export class QQbot {
 
     get clientCount () {
         return this.server.clients.keys.length;
+    }
+
+    // shortcuts for message
+    onPrivateMessage (handler, ...args) {
+        return this.onMessage('private', handler, ...args);
+    }
+
+    // shortcuts for message
+    onPublicMessage (handler, option) {
+        // this.onMessage('group', handler, ...args);
+        return this.fastAddEventHandler(['common', 'private', 'group', 'channel'], 'message', 'common', handler, option);
+    }
+
+    // shortcuts for message
+    onGroupMessage (handler, ...args) {
+        return this.onMessage('group', handler, ...args);
+    }
+
+    async initPlugin (plugin: Plugin, options = {}) {
+        // init plugin
+        const namespace = await plugin.namespace(options);
+
+        // unmanaged hooks
+        Object.entries(plugin.hooks).forEach(([eventName, handler]) => {
+            this.info('installing unmanaged hook: ' + eventName);
+            if (!this[eventName]) return this.warn('hook ' + eventName + ' not exists'); // throw new Error('hook' + eventName + 'not exists')
+
+            const cb = (ctx) => handler(ctx, namespace);
+            if (eventName === 'onMessage') return this.onMessage('common', cb);
+            this[eventName](cb);
+        });
+
+        // todo: database
+
+        // chainable function
+        const messageHandler = plugin.create(options, namespace);
+        return {
+            namespace,
+            messageHandler
+        };
+    }
+
+    async use (plugin: Plugin) {
+        const pluginCtx = await this.initPlugin(plugin);
+        this.plugins.set(plugin, pluginCtx);
+    }
+
+    start () {
+        this.onMessage('common', createChain(...Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
     }
 }
