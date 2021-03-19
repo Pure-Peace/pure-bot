@@ -17,7 +17,7 @@ const createChain = (processors) => {
         }, true);
 
         if (!tempMiddlewares.length) return;
-        const tempMiddlewareChain = createChain(...tempMiddlewares);
+        const tempMiddlewareChain = createChain(tempMiddlewares);
 
         await tempMiddlewareChain(...args);
     };

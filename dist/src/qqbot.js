@@ -450,7 +450,7 @@ class QQbot {
     }
     async beforeHandleCheck(ctx) {
         for (const checker of Object.values(this.beforeHandleCheckers)) {
-            const checkResult = utils_1.isAsyncFn(checker) ? await checker(ctx) : checker(ctx);
+            const checkResult = await checker(ctx);
             if (checkResult === false) {
                 return false;
             }
