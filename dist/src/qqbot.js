@@ -112,6 +112,7 @@ class QQbot {
         this.loggerize(loggerOptions);
         this.initEventsMethod(this);
         this.initServer(serverOptions);
+        this.plugins = new Map();
     }
     initServer(options) {
         this.server = new WebSocket.Server(options);
@@ -515,9 +516,13 @@ class QQbot {
         const namespace = await plugin.namespace(options);
         // unmanaged hooks
         Object.entries(plugin.hooks).forEach(([eventName, handler]) => {
+            this.info('installing unmanaged hook: ' + eventName);
             if (!this[eventName])
-                return; // throw new Error('hook' + eventName + 'not exists')
-            this[eventName]((ctx) => handler(ctx, namespace));
+                return this.warn('hook ' + eventName + ' not exists'); // throw new Error('hook' + eventName + 'not exists')
+            const cb = (ctx) => handler(ctx, namespace);
+            if (eventName === 'onMessage')
+                return this.onMessage('common', cb);
+            this[eventName](cb);
         });
         // todo: database
         // chainable function

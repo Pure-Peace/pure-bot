@@ -13,8 +13,10 @@ const bot = new QQbot({
     }
 });
 
-bot.use(require('pure-plugin-proposal'));
-bot.start();
+(async () => {
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.start();
+})();
 // const sub = source(bot).platform('irc').use(require('pure-plugin-onebot-plugin'))
 
 // // 注册heartbeat事件

@@ -5,7 +5,7 @@
       "node_modules/**/node_modules"
     ],
     "verbose": false,
-    "exec": "tsc --build && node ./example/installPlugin",
+    "exec": "tsc --build && node ./example/install-plugin.js",
     "watch": [
       "."
     ],

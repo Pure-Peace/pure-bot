@@ -57,7 +57,8 @@
     "ws": "^7.4.4"
   },
   "workspaces": [
-    "adapter-koishi-plugin",
-    "chain-of-responsibility"
+    "packages/adapter-koishi-plugin",
+    "packages/chain-of-responsibility",
+    "packages/pure-plugin-proposal"
   ]
 }
