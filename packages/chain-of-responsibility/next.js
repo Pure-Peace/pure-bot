@@ -25,6 +25,8 @@ const middlewares = [middleware1, middleware2, middleware3];
 
 const processor = createChain(...middlewares);
 
-processor({ nextFrom1: true });
-processor({ tempMiddleware: true, nextFrom1: true });
-processor({});
+(async () => {
+    await processor({ nextFrom1: true });
+    await processor({ tempMiddleware: true, nextFrom1: true });
+    await processor({});
+})();
