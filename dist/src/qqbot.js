@@ -344,6 +344,14 @@ class QQbot {
             this.warn('Unhandled event:', event, '; msg:', msg);
         }
     }
+    async fakeMessage(event) {
+        return this.handleMessage(JSON.stringify(event), {
+            heartBeat() { },
+            sendJson(json) {
+                this.info('fake message replied:', JSON.parse(json));
+            }
+        });
+    }
     async fastEventHandler({ taskList, tipString, time, ctx, type }) {
         const isHeartbeat = ctx.msg.meta_event_type === 'heartbeat';
         const condi0 = !isHeartbeat &&
@@ -537,7 +545,7 @@ class QQbot {
         this.plugins.set(plugin, pluginCtx);
     }
     start() {
-        this.onMessage('common', createChain(Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
+        this.onMessage('common', createChain(...Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
     }
 }
 exports.QQbot = QQbot;

@@ -178,6 +178,7 @@ export declare class QQbot {
     onLifecycle(lifecycle: ('connect' | 'enable' | 'disable'), handler: handler): void;
     defaultEvents(eventAssigns: Object): events;
     handleMessage(msg: any, ws: MyWebSocket): Promise<void>;
+    fakeMessage(event: any): Promise<void>;
     fastEventHandler({ taskList, tipString, time, ctx, type }: {
         taskList: Array<handlerTask>;
         tipString: string;

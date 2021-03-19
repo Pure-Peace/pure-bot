@@ -467,6 +467,15 @@ export class QQbot {
         }
     }
 
+    async fakeMessage (event) {
+        return this.handleMessage(JSON.stringify(event), {
+            heartBeat () {},
+            sendJson (json) {
+                this.info('fake message replied:', JSON.parse(json));
+            }
+        } as MyWebSocket);
+    }
+
     async fastEventHandler ({
         taskList, tipString, time, ctx, type
     }: { taskList: Array<handlerTask>, tipString: string, time: Duration, ctx: MessageContext, type: string }) {
@@ -765,6 +774,6 @@ export class QQbot {
     }
 
     start () {
-        this.onMessage('common', createChain(Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
+        this.onMessage('common', createChain(...Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
     }
 }

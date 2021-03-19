@@ -12,8 +12,8 @@ module.exports = {
         console.log('have access to singleton namespace', singletonNamespace);
         console.log('have access to plugin namespace', namespace);
         return (ctx, next) => {
-            console.log('processed message', ctx);
-
+            console.log('processed message', ctx.raw_message);
+            /*
             // database methods
             // allow pre-defiend getter setter only
             const myLastMove = ctx.database.user.lastActivity;
@@ -29,23 +29,24 @@ module.exports = {
                 reply: ctx,
                 content: myLastMove
             });
+            */
         };
     },
     hooks: {
         onMessage (ctx, namespace) {
-            console.debug('recived message', ctx);
+            console.debug('unmanaged onMessage hook recived message', ctx.raw_message);
         },
         onPrivateMessage (ctx, namespace) {
-            console.debug('recived private message', ctx);
+            console.debug('unmanaged onPrivateMessage hook message', ctx.raw_message);
         },
         onPublicMessage (ctx, namespace) {
-            console.debug('recived public message (includes channel message (irc, khl, discord) and group message (onebot))', ctx);
+            console.debug('unmanaged onPublicMessage hook recived message (includes channel message (irc, khl, discord) and group message (onebot))', ctx);
         },
         onChannelMessage (ctx, namespace) {
-            console.debug('recived channel message (irc, khl, discord)');
+            console.debug('unmanaged onChannelMessage hook recived message (irc, khl, discord)');
         },
         onGroupMessage (ctx, namespace) {
-            console.debug('recived channel message (irc, khl, discord)');
+            console.debug('unmanaged onGroupMessage hook recived message (irc, khl, discord)');
         }
     },
     database: {
