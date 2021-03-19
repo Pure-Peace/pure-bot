@@ -1,4 +1,5 @@
-const createChain = require('./index');
+// @ts-nocheck
+import * as createChain from './index';
 
 const middleware1 = (ctx, next) => {
     console.log('processed at 1', ctx);

@@ -25,4 +25,4 @@ const createChain = (...processors) => {
     return onMessage;
 };
 
-module.exports = (...processors) => createChain(...processors);
+export default (...processors) => createChain(...processors);
