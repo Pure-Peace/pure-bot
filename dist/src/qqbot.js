@@ -1,191 +1,97 @@
 'use strict';
-
-import * as WebSocket from 'ws';
-import { EventEmitter } from 'events';
-import * as chalk from 'chalk';
-import * as dayjs from 'dayjs';
-
-import { MessageContext } from './context';
-import { Duration, isAsyncFn } from './utils';
-
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.QQbot = void 0;
+const WebSocket = require("ws");
+const events_1 = require("events");
+const chalk = require("chalk");
+const dayjs = require("dayjs");
+const context_1 = require("./context");
+const utils_1 = require("./utils");
 const parse = require('fast-json-parse');
 const stringify = require('fast-json-stable-stringify');
 const createChain = require('chain-of-responsibility');
-
-export declare class MyWebSocket extends WebSocket {
-    heartBeat: () => void;
-    pingTimeout: NodeJS.Timeout;
-    alive: boolean;
-    sendJson: (data: any) => void;
-}
-
-type PluginHookHandler = (ctx: MessageContext, namespace: any) => void
-
-interface Plugin {
-    create: (options: any, namespace: any) => CallableFunction;
-    namespace: (options: any) => any;
-    hooks: Record<string, PluginHookHandler>
-}
-
-type handler = (ctx: MessageContext) => any;
-type afterHandler = (ctx: MessageContext, result: any) => any;
-type serverOptions = { port?: number, deactive_timeout?: number };
-type handleFilters = {
-    prefixes?: Array<string>,
-    regexs?: Array<RegExp>,
-    keywords?: Array<string>,
-    include_qq?: Array<string | number>,
-    include_group?: Array<string | number>,
-    exclude_qq?: Array<string | number>,
-    exclude_group?: Array<string | number>
-};
-type handlerTask = {
-    handler: handler,
-    filters: handleFilters,
-    beforeChecker: handler,
-    afterHandler: afterHandler
-};
-type handleOptions = { where?: string, filters?: handleFilters, beforeChecker?: handler, afterHandler?: afterHandler };
-type events = {
-    message: {
-        common: Array<handler>,
-        private: {
-            common: Array<handler>,
-            friend: Array<handler>,
-            group: Array<handler>,
-            other: Array<handler>
-        },
-        group: {
-            common: Array<handler>,
-            normal: Array<handler>,
-            anonymous: Array<handler>,
-            notice: Array<handler>
-        }
-    },
-    notice: {
-        common: Array<handler>,
-        private: {
-            common: Array<handler>,
-            friend_add: Array<handler>,
-            friend_recall: Array<handler>,
-            notify: {
-                common: Array<handler>,
-                poke: Array<handler>,
-                lucky_king: Array<handler>,
-                honor: Array<handler>,
+class QQbot {
+    constructor({ name, logName, logUnhandledInfo, logHeartbeat, debug, serverOptions = { port: 8080, deactive_timeout: 5000 }, eventAssigns = {}, customGlobalFilters = {}, loggerOptions = {}, beforeHandleCheckers = {}, afterHandlers = {}, initEventsMethod = (bot) => { } }) {
+        this.eventHandlers = {
+            message: async (ctx) => {
+                const msg = ctx.msg;
+                const time = new utils_1.Duration();
+                const level1 = this.events.message;
+                const level2 = level1[msg.message_type];
+                const level3 = level2[msg.sub_type];
+                const taskList = [...level1.common, ...level2.common, ...level3];
+                const tipString = `${chalk.yellow(msg.message_type)}.${chalk.yellow(msg.sub_type || '.')}`;
+                this.fastEventHandler({
+                    taskList, tipString, time, ctx, type: 'message'
+                });
+            },
+            notice: async (ctx) => {
+                const msg = ctx.msg;
+                const time = new utils_1.Duration();
+                let taskList;
+                if (['friend_add', 'friend_recall'].includes(msg.notice_type)) {
+                    msg.custom_type = 'private';
+                }
+                else if (!msg.group_id) {
+                    msg.custom_type = 'private';
+                }
+                else {
+                    msg.custom_type = 'group';
+                }
+                const level1 = this.events.notice;
+                const level2 = level1[msg.custom_type];
+                const level3 = level2[msg.notice_type];
+                const level4 = level3[msg.sub_type];
+                if (level3.constructor === Array) {
+                    taskList = [...level1.common, ...level2.common, ...level3];
+                }
+                else {
+                    taskList = [...level1.common, ...level2.common, ...level3.common, ...level4];
+                }
+                const tipString = `${chalk.yellow(msg.custom_type)}.${chalk.yellow(msg.notice_type + '.' + msg.sub_type || '.')}`;
+                this.fastEventHandler({
+                    taskList, tipString, time, ctx, type: 'notice'
+                });
+            },
+            request: async (ctx) => {
+                const msg = ctx.msg;
+                const time = new utils_1.Duration();
+                let taskList;
+                const level1 = this.events.request;
+                const level2 = level1[msg.request_type];
+                const level3 = level2[msg.sub_type];
+                if (level2.constructor === Array) {
+                    taskList = [...level1.common, ...level2];
+                }
+                else {
+                    taskList = [...level1.common, ...level2.common, ...level3];
+                }
+                const tipString = `${chalk.yellow(msg.request_type)}.${chalk.yellow(msg.sub_type || '.')}`;
+                this.fastEventHandler({
+                    taskList, tipString, time, ctx, type: 'request'
+                });
+            },
+            meta_event: async (ctx) => {
+                const msg = ctx.msg;
+                const time = new utils_1.Duration();
+                let taskList;
+                const level1 = this.events.meta_event;
+                const level2 = level1[msg.meta_event_type];
+                const level3 = level2[msg.sub_type];
+                if (level2.constructor === Array) {
+                    taskList = [...level1.common, ...level2];
+                }
+                else {
+                    taskList = [...level1.common, ...level2.common, ...level3];
+                }
+                const tipString = `${chalk.yellow(msg.meta_event_type)}.${chalk.yellow(msg.sub_type || '.')}`;
+                this.fastEventHandler({
+                    taskList, tipString, time, ctx, type: 'meta_event'
+                });
             }
-        },
-        group: {
-            common: Array<handler>,
-            group_upload: Array<handler>,
-            group_admin: {
-                common: Array<handler>,
-                set: Array<handler>,
-                unset: Array<handler>,
-            },
-            group_decrease: {
-                common: Array<handler>,
-                leave: Array<handler>,
-                kick: Array<handler>,
-                kick_me: Array<handler>,
-            },
-            group_increase: {
-                common: Array<handler>,
-                approve: Array<handler>,
-                invite: Array<handler>,
-            },
-            group_ban: {
-                common: Array<handler>,
-                ban: Array<handler>,
-                lift_ban: Array<handler>,
-            },
-            group_recall: Array<handler>,
-            notify: {
-                common: Array<handler>,
-                poke: Array<handler>,
-                lucky_king: Array<handler>,
-                honor: Array<handler>,
-            }
-        }
-    },
-    request: {
-        common: Array<handler>,
-        friend: Array<handler>,
-        group: {
-            common: Array<handler>,
-            add: Array<handler>,
-            invite: Array<handler>,
-        }
-    },
-    meta_event: {
-        common: Array<handler>,
-        lifecycle: {
-            common: Array<handler>,
-            connect: Array<handler>,
-            enable: Array<handler>,
-            disable: Array<handler>,
-        },
-        heartbeat: Array<handler>,
-    }
-};
-
-export class QQbot {
-    id: string;
-    name: string;
-    logName: string;
-    connected: boolean;
-    debug: boolean;
-    logUnhandledInfo: boolean;
-    logHeartbeat: boolean;
-    eventEmitter: EventEmitter;
-    globalFilters: handleFilters;
-    loggerOptions: {};
-    totalSend: number;
-    totalRecive: number;
-    lastRecived: number;
-    plugins: Map<any, any>;
-    status: {};
-    events: events;
-    initEventsMethod: (bot: QQbot) => void;
-    defaultHandleOptions: () => handleOptions;
-    defaultFilters: handleFilters;
-    beforeHandleCheckers: ({ handler: handler } | {});
-    afterHandlers: ({ handler: afterHandler } | {});
-    server: WebSocket.Server;
-    info: (...args) => {};
-    log: (...args) => {};
-    warn: (...args) => {};
-    error: (...args) => {};
-    constructor ({
-        name,
-        logName,
-        logUnhandledInfo,
-        logHeartbeat,
-        debug,
-        serverOptions = { port: 8080, deactive_timeout: 5000 },
-        eventAssigns = {},
-        customGlobalFilters = {},
-        loggerOptions = {},
-        beforeHandleCheckers = {},
-        afterHandlers = {},
-        initEventsMethod = (bot) => { }
-    }: {
-        name: string,
-        logName?: string,
-        logUnhandledInfo?: boolean,
-        logHeartbeat?: boolean,
-        debug?: boolean,
-        serverOptions?: serverOptions,
-        eventAssigns?: object,
-        customGlobalFilters?: object,
-        loggerOptions?: object,
-        beforeHandleCheckers?: object,
-        afterHandlers?: object,
-        initEventsMethod?: (bot: QQbot) => any
-    }) {
-        this.defaultHandleOptions = () => { return { where: '', filters: this.globalFilters, beforeChecker: undefined, afterHandler: undefined } };
+        };
+        this.defaultHandleOptions = () => { return { where: '', filters: this.globalFilters, beforeChecker: undefined, afterHandler: undefined }; };
         this.defaultFilters = { prefixes: [], regexs: [], keywords: [], include_qq: [], include_group: [], exclude_qq: [], exclude_group: [] };
-
         this.id = '?';
         this.name = name ?? 'default';
         this.logName = logName ?? 'QQBot';
@@ -193,31 +99,25 @@ export class QQbot {
         this.debug = debug ?? true;
         this.logUnhandledInfo = logUnhandledInfo ?? true;
         this.logHeartbeat = logHeartbeat ?? true;
-        this.eventEmitter = new EventEmitter();
+        this.eventEmitter = new events_1.EventEmitter();
         this.globalFilters = Object.assign(this.defaultFilters, customGlobalFilters ?? {});
-
         this.totalSend = 0;
         this.totalRecive = 0;
         this.lastRecived = -1;
         this.status = {};
-
         this.initEventsMethod = initEventsMethod ?? ((bot) => { });
         this.events = this.defaultEvents(eventAssigns);
         this.beforeHandleCheckers = beforeHandleCheckers ?? {};
         this.afterHandlers = afterHandlers ?? {};
-
         this.loggerize(loggerOptions);
         this.initEventsMethod(this);
         this.initServer(serverOptions);
-
         this.plugins = new Map();
     }
-
-    initServer (options) {
+    initServer(options) {
         this.server = new WebSocket.Server(options);
         this.info(chalk.yellowBright(`started, waiting for ws connect... (port: ${options.port})`));
-
-        this.server.on('connection', async (ws: MyWebSocket) => {
+        this.server.on('connection', async (ws) => {
             ws.sendJson = (data) => {
                 ws.send(stringify(data));
             };
@@ -233,12 +133,9 @@ export class QQbot {
             ws.on('message', (msg) => this.handleMessage(msg, ws));
         });
     }
-
-    fastAddEventHandler (typeCheckIn: Array<string>, eventType: string, type: string, handler: handler,
-        options: handleOptions) {
+    fastAddEventHandler(typeCheckIn, eventType, type, handler, options) {
         let { where, filters, beforeChecker, afterHandler } = Object.assign(this.defaultHandleOptions(), options);
-        const handlerTask: handlerTask = { handler, filters, beforeChecker, afterHandler };
-
+        const handlerTask = { handler, filters, beforeChecker, afterHandler };
         let extraTypes = '';
         const handlerChalked = `${chalk.yellowBright(eventType)}`;
         const success = () => this.info(`success to add handler: ${handlerChalked}.${chalk.green(type + '.' + (where || 'common'))}`);
@@ -253,8 +150,10 @@ export class QQbot {
             return;
         }
         if (!where) {
-            if (e[type].constructor === Array) e[type].push(handlerTask);
-            else e[type].common.push(handlerTask);
+            if (e[type].constructor === Array)
+                e[type].push(handlerTask);
+            else
+                e[type].common.push(handlerTask);
             success();
             return;
         }
@@ -282,7 +181,8 @@ export class QQbot {
                 success();
                 return;
             }
-        } else {
+        }
+        else {
             if (where in e[type]) {
                 e[type][where].push(handlerTask);
                 success();
@@ -291,47 +191,30 @@ export class QQbot {
         }
         this.error(`error when add handler, 'where' of '${handlerChalked}' type '${type}' must in [${Object.keys(e[type])}]${extraTypes || ''}, got '${where}'.`);
     }
-
-    onMessage (type: ('common' | 'private' | 'group'),
-        handler: handler,
-        options: handleOptions = {}) {
+    onMessage(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'private', 'group'], 'message', type, handler, options);
     }
-
-    onNotice (type: ('common' | 'private' | 'group'),
-        handler: handler,
-        options: handleOptions = {}) {
+    onNotice(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'private', 'group'], 'notice', type, handler, options);
     }
-
-    onRequest (type: ('common' | 'friend' | 'group'),
-        handler: handler,
-        options: handleOptions = {}) {
+    onRequest(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'friend', 'group'], 'request', type, handler, options);
     }
-
-    onMetaEvent (type: ('common' | 'lifecycle' | 'heartbeat'),
-        handler: handler,
-        options: handleOptions = {}) {
+    onMetaEvent(type, handler, options = {}) {
         this.fastAddEventHandler(['common', 'lifecycle', 'heartbeat'], 'meta_event', type, handler, options);
     }
-
-    onLifecycle (lifecycle: ('connect' | 'enable' | 'disable'),
-        handler: handler) {
+    onLifecycle(lifecycle, handler) {
         const handlerChalked = `${chalk.yellowBright('lifecycle')}`;
         const lifecycles = ['connect', 'enable', 'disable'];
-
         if (!lifecycles.includes(lifecycle)) {
             this.error(`invalid lifecycle: ${lifecycle}, should be in ${lifecycles.join(', ')}`);
             return;
         }
-
         this.events.meta_event[lifecycle].push(handler);
         this.info(`success to add ${handlerChalked} handler: ${chalk.green(lifecycle)}`);
     }
-
-    defaultEvents (eventAssigns: Object) {
-        const defaultEvents: events = {
+    defaultEvents(eventAssigns) {
+        const defaultEvents = {
             message: {
                 common: [],
                 private: {
@@ -407,37 +290,33 @@ export class QQbot {
                 lifecycle: {
                     common: [],
                     connect: [
-                        async (ctx: MessageContext) => {
+                        async (ctx) => {
                             this.connected = true;
                             ctx.ws.alive = true;
                             this.id = ctx.msg.self_id;
                             this.info(chalk.yellowBright('successfully connected! online now!'));
-                        }],
+                        }
+                    ],
                     enable: [],
                     disable: []
                 },
                 heartbeat: [
-                    async (ctx: MessageContext) => {
+                    async (ctx) => {
                         this.status = ctx.msg.status;
                     }
                 ]
             }
-
         };
-
         if (eventAssigns) {
             Object.assign(defaultEvents, eventAssigns);
         }
-
         return defaultEvents;
     }
-
-    async handleMessage (msg: any, ws: MyWebSocket) {
+    async handleMessage(msg, ws) {
         // update recive
         ws.heartBeat();
         this.totalRecive += 1;
         this.lastRecived = new Date().getTime();
-
         // parse data
         const parseResult = parse(msg);
         if (parseResult.err) {
@@ -445,52 +324,44 @@ export class QQbot {
             return;
         }
         msg = parseResult.value;
-
         // build context
-        const ctx = new MessageContext(msg, ws, this);
-
+        const ctx = new context_1.MessageContext(msg, ws, this);
         // do before check
         if (!this.beforeHandleCheck(ctx)) {
             return;
         }
-
         // handle event
         const event = msg.post_type;
         const handler = this.eventHandlers[event];
         if (handler) {
             handler(ctx);
-        } else if (msg.echo) {
+        }
+        else if (msg.echo) {
             this.eventEmitter.emit(msg.echo, msg);
             this.info(`recived api call result, id: ${chalk.yellowBright(msg.echo)}; status: ${msg.status};`);
-        } else {
+        }
+        else {
             this.warn('Unhandled event:', event, '; msg:', msg);
         }
     }
-
-    async fakeMessage (event) {
+    async fakeMessage(event) {
         return this.handleMessage(JSON.stringify(event), {
-            heartBeat () {},
-            sendJson (json) {
+            heartBeat() { },
+            sendJson(json) {
                 this.info('fake message replied:', JSON.parse(json));
             }
-        } as MyWebSocket);
+        });
     }
-
-    async fastEventHandler ({
-        taskList, tipString, time, ctx, type
-    }: { taskList: Array<handlerTask>, tipString: string, time: Duration, ctx: MessageContext, type: string }) {
+    async fastEventHandler({ taskList, tipString, time, ctx, type }) {
         const isHeartbeat = ctx.msg.meta_event_type === 'heartbeat';
         const condi0 = !isHeartbeat &&
             (this.logUnhandledInfo && (!taskList || taskList.length === 0));
-        if (
-            (isHeartbeat && this.logHeartbeat) || condi0
-        ) {
+        if ((isHeartbeat && this.logHeartbeat) || condi0) {
             this.warn(`Unhandled ${chalk.yellowBright(type)}.${tipString} message:`, ctx.msg, '; time:', time.elapsed().format());
             return;
         }
-
         const partLog = (...msg) => this.debug && this.warn(...msg);
-        const readyTaskList: Array<handler> = [];
+        const readyTaskList = [];
         for (const t of taskList) {
             if (t.constructor === Object) {
                 if (!t.handler) {
@@ -541,43 +412,43 @@ export class QQbot {
                 }
                 // before checker
                 if (t.beforeChecker &&
-                    (isAsyncFn(t.beforeChecker) ? await t.beforeChecker(ctx) : t.beforeChecker(ctx)) === false) {
+                    (utils_1.isAsyncFn(t.beforeChecker) ? await t.beforeChecker(ctx) : t.beforeChecker(ctx)) === false) {
                     partLog('fastEventHandler: before checker blocked.');
                     continue;
                 }
-
                 // mixin after handler
                 if (t.afterHandler) {
-                    readyTaskList.push(async (ctx: MessageContext) => {
-                        const res = isAsyncFn(t.handler) ? await t.handler(ctx) : t.handler(ctx);
-                        isAsyncFn(t.afterHandler) ? await t.afterHandler(ctx, res) : t.afterHandler(ctx, res);
+                    readyTaskList.push(async (ctx) => {
+                        const res = utils_1.isAsyncFn(t.handler) ? await t.handler(ctx) : t.handler(ctx);
+                        utils_1.isAsyncFn(t.afterHandler) ? await t.afterHandler(ctx, res) : t.afterHandler(ctx, res);
                     });
-                } else {
+                }
+                else {
                     readyTaskList.push(t.handler);
                 }
-            } else {
-                readyTaskList.push(t as unknown as handler);
+            }
+            else {
+                readyTaskList.push(t);
             }
         }
-
         Promise.allSettled(readyTaskList.map(handler => handler(ctx))).finally(() => {
             const condi1 = !isHeartbeat &&
                 (this.logUnhandledInfo || (!this.logUnhandledInfo && readyTaskList.length !== 0));
-            if (
-                (isHeartbeat && this.logHeartbeat) || condi1
-            ) {
+            if ((isHeartbeat && this.logHeartbeat) || condi1) {
                 const baseInfo = `${readyTaskList.length} ${chalk.yellowBright(type)}.${tipString} handle done in ${time.elapsed().format()}.`;
                 let extraInfo = '';
-                if (ctx.msg.user_id) extraInfo += `sender: ${ctx.msg.user_id}; `;
-                if (ctx.msg.group_id) extraInfo += `group: ${ctx.msg.group_id}; `;
-                if (ctx.msg.raw_message) extraInfo += `raw_msg: ${ctx.msg.raw_message.slice(0, 200)};`;
+                if (ctx.msg.user_id)
+                    extraInfo += `sender: ${ctx.msg.user_id}; `;
+                if (ctx.msg.group_id)
+                    extraInfo += `group: ${ctx.msg.group_id}; `;
+                if (ctx.msg.raw_message)
+                    extraInfo += `raw_msg: ${ctx.msg.raw_message.slice(0, 200)};`;
                 this.info(baseInfo, extraInfo ? `[${chalk.yellowBright(extraInfo)}]` : '');
             }
             this.afterHandle(ctx);
         });
     }
-
-    async beforeHandleCheck (ctx: MessageContext) {
+    async beforeHandleCheck(ctx) {
         for (const checker of Object.values(this.beforeHandleCheckers)) {
             const checkResult = await checker(ctx);
             if (checkResult === false) {
@@ -586,128 +457,37 @@ export class QQbot {
         }
         return true;
     }
-
-    addBeforeChecker (name: string, handler: handler) {
+    addBeforeChecker(name, handler) {
         const alreadyExists = this.beforeHandleCheckers[name];
         this.beforeHandleCheckers[name] = handler;
         this.info(`new before checker ${name} ${alreadyExists ? 'rewrited' : 'added'}.`);
     }
-
-    removeBeforeChecker (name: string) {
+    removeBeforeChecker(name) {
         if (this.beforeHandleCheckers[name]) {
             delete (this.beforeHandleCheckers[name]);
             this.info(`before checker ${name} removed.`);
         }
         this.info(`before checker ${name} not exists.`);
     }
-
-    async afterHandle (ctx: MessageContext) {
+    async afterHandle(ctx) {
         const handlers = Object.values(this.afterHandlers);
         if (handlers.length > 0) {
             Promise.allSettled(handlers.map(func => func(ctx, this)));
         }
     }
-
-    addAfterHandler (name: string, handler: handler) {
+    addAfterHandler(name, handler) {
         const alreadyExists = this.afterHandlers[name];
         this.afterHandlers[name] = handler;
         this.info(`new after handler ${name} ${alreadyExists ? 'rewrited' : 'added'}.`);
     }
-
-    removeaddAfterHandler (name: string) {
+    removeaddAfterHandler(name) {
         if (this.afterHandlers[name]) {
             delete (this.afterHandlers[name]);
             this.info(`after handler ${name} removed.`);
         }
         this.info(`after handler ${name} not exists.`);
     }
-
-    eventHandlers = {
-        message: async (ctx: MessageContext) => {
-            const msg = ctx.msg;
-            const time = new Duration();
-
-            const level1 = this.events.message;
-            const level2 = level1[msg.message_type];
-            const level3 = level2[msg.sub_type];
-            const taskList = [...level1.common, ...level2.common, ...level3];
-
-            const tipString = `${chalk.yellow(msg.message_type)}.${chalk.yellow(msg.sub_type || '.')}`;
-            this.fastEventHandler({
-                taskList, tipString, time, ctx, type: 'message'
-            });
-        },
-        notice: async (ctx: MessageContext) => {
-            const msg = ctx.msg;
-            const time = new Duration();
-
-            let taskList: Array<any>;
-            if (['friend_add', 'friend_recall'].includes(msg.notice_type)) {
-                msg.custom_type = 'private';
-            } else if (!msg.group_id) {
-                msg.custom_type = 'private';
-            } else {
-                msg.custom_type = 'group';
-            }
-            const level1 = this.events.notice;
-            const level2 = level1[msg.custom_type];
-            const level3 = level2[msg.notice_type];
-            const level4 = level3[msg.sub_type];
-
-            if (level3.constructor === Array) {
-                taskList = [...level1.common, ...level2.common, ...level3];
-            } else {
-                taskList = [...level1.common, ...level2.common, ...level3.common, ...level4];
-            }
-
-            const tipString = `${chalk.yellow(msg.custom_type)}.${chalk.yellow(msg.notice_type + '.' + msg.sub_type || '.')}`;
-            this.fastEventHandler({
-                taskList, tipString, time, ctx, type: 'notice'
-            });
-        },
-        request: async (ctx: MessageContext) => {
-            const msg = ctx.msg;
-            const time = new Duration();
-
-            let taskList: Array<any>;
-            const level1 = this.events.request;
-            const level2 = level1[msg.request_type];
-            const level3 = level2[msg.sub_type];
-
-            if (level2.constructor === Array) {
-                taskList = [...level1.common, ...level2];
-            } else {
-                taskList = [...level1.common, ...level2.common, ...level3];
-            }
-
-            const tipString = `${chalk.yellow(msg.request_type)}.${chalk.yellow(msg.sub_type || '.')}`;
-            this.fastEventHandler({
-                taskList, tipString, time, ctx, type: 'request'
-            });
-        },
-        meta_event: async (ctx: MessageContext) => {
-            const msg = ctx.msg;
-            const time = new Duration();
-
-            let taskList: Array<any>;
-            const level1 = this.events.meta_event;
-            const level2 = level1[msg.meta_event_type];
-            const level3 = level2[msg.sub_type];
-
-            if (level2.constructor === Array) {
-                taskList = [...level1.common, ...level2];
-            } else {
-                taskList = [...level1.common, ...level2.common, ...level3];
-            }
-
-            const tipString = `${chalk.yellow(msg.meta_event_type)}.${chalk.yellow(msg.sub_type || '.')}`;
-            this.fastEventHandler({
-                taskList, tipString, time, ctx, type: 'meta_event'
-            });
-        }
-    }
-
-    loggerize (options: object) {
+    loggerize(options) {
         const _options = {
             info: {
                 color: 'green'
@@ -725,52 +505,43 @@ export class QQbot {
         if (options) {
             Object.assign(_options, options);
         }
-
         for (const [key, op] of Object.entries(_options)) {
-            this[key] = (...info: Array<any>) => console[key](this.format({ color: op.color, level: key.toUpperCase() }), ...info);
+            this[key] = (...info) => console[key](this.format({ color: op.color, level: key.toUpperCase() }), ...info);
         }
     }
-
-    format ({ color = 'green', level = 'INFO' }) {
+    format({ color = 'green', level = 'INFO' }) {
         return `[${dayjs().format('YYYY-MM-DD HH:mm:ss')}] ${chalk[color](`[${level}]`)} ${this.logName} <${this.name}(${this.id})>`;
     }
-
-    get clientCount () {
+    get clientCount() {
         return this.server.clients.keys.length;
     }
-
     // shortcuts for message
-    onPrivateMessage (handler, ...args) {
+    onPrivateMessage(handler, ...args) {
         return this.onMessage('private', handler, ...args);
     }
-
     // shortcuts for message
-    onPublicMessage (handler, option) {
+    onPublicMessage(handler, option) {
         // this.onMessage('group', handler, ...args);
         return this.fastAddEventHandler(['common', 'private', 'group', 'channel'], 'message', 'common', handler, option);
     }
-
     // shortcuts for message
-    onGroupMessage (handler, ...args) {
+    onGroupMessage(handler, ...args) {
         return this.onMessage('group', handler, ...args);
     }
-
-    async initPlugin (plugin: Plugin, options = {}) {
+    async initPlugin(plugin, options = {}) {
         // init plugin
         const namespace = await plugin.namespace(options);
-
         // unmanaged hooks
         Object.entries(plugin.hooks).forEach(([eventName, handler]) => {
             this.info('installing unmanaged hook: ' + eventName);
-            if (!this[eventName]) return this.warn('hook ' + eventName + ' not exists'); // throw new Error('hook' + eventName + 'not exists')
-
+            if (!this[eventName])
+                return this.warn('hook ' + eventName + ' not exists'); // throw new Error('hook' + eventName + 'not exists')
             const cb = (ctx) => handler(ctx, namespace);
-            if (eventName === 'onMessage') return this.onMessage('common', cb);
+            if (eventName === 'onMessage')
+                return this.onMessage('common', cb);
             this[eventName](cb);
         });
-
         // todo: database
-
         // chainable function
         const messageHandler = plugin.create(options, namespace);
         return {
@@ -778,13 +549,12 @@ export class QQbot {
             messageHandler
         };
     }
-
-    async use (plugin: Plugin) {
+    async use(plugin) {
         const pluginCtx = await this.initPlugin(plugin);
         this.plugins.set(Math.random(), pluginCtx);
     }
-
-    start () {
+    start() {
         this.onMessage('common', createChain(Array.from(this.plugins).map(([, { messageHandler }]) => messageHandler)));
     }
 }
+exports.QQbot = QQbot;

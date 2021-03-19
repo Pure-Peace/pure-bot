@@ -13,6 +13,9 @@ module.exports = {
         console.log('have access to plugin namespace', namespace);
         return (ctx, next) => {
             console.log('plugin: processed message', ctx.raw_message);
+            console.log(new Error('next function do not appear in the call stack').stack);
+            next();
+            console.log('codes after next() is also executed and execute before next plugin');
             /*
             // database methods
             // allow pre-defiend getter setter only
