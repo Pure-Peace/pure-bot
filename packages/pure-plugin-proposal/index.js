@@ -12,7 +12,7 @@ module.exports = {
         console.log('have access to singleton namespace', singletonNamespace);
         console.log('have access to plugin namespace', namespace);
         return (ctx, next) => {
-            console.log('processed message', ctx.raw_message);
+            console.log('plugin: processed message', ctx.raw_message);
             /*
             // database methods
             // allow pre-defiend getter setter only
