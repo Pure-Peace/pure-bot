@@ -20,9 +20,8 @@
     "dist"
   ],
   "scripts": {
-    "go": "cross-env NODE_ENV=development nodemon --config nodemon.json",
-    "start": "cross-env NODE_ENV=production nodemon --config nodemon.json",
-    "installTest": "cross-env NODE_ENV=production nodemon --config installPlugin.json",
+    "dev": "cross-env NODE_ENV=development node example.js",
+    "prod": "cross-env NODE_ENV=development node example.js",
     "lint": "eslint --ext .js,.ts,.tsx test/ src/",
     "publish": "git push && npm publish"
   },

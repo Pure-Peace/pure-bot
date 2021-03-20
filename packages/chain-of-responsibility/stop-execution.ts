@@ -1,3 +1,4 @@
+// @ts-nocheck
 class Next extends Error {}
 
 const createChain = (processors) => {
