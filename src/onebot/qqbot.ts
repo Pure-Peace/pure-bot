@@ -736,7 +736,7 @@ export class QQbot {
     }
 
     get clientCount () {
-        return this.server.clients.keys.length;
+        return this.server.clients.size;
     }
 
     // shortcuts for message
