@@ -6,8 +6,8 @@ import * as chalk from 'chalk';
 import * as dayjs from 'dayjs';
 
 import { MessageContext } from './context';
-import { Duration, isAsyncFn } from './utils';
-import { createChain } from '../packages/chain-of-responsibility';
+import { Duration, isAsyncFn } from '../utils';
+import { createChain } from '../../packages/chain-of-responsibility';
 
 const parse = require('fast-json-parse');
 const stringify = require('fast-json-stable-stringify');

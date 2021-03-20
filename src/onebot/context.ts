@@ -1,5 +1,5 @@
 'use strict';
-import { MyWebSocket, QQbot } from 'qqbot';
+import { MyWebSocket, QQbot } from 'onebot/qqbot';
 import { CqApi } from './cq_api';
 
 export class MessageContext {

@@ -1,14 +1,14 @@
 'use strict';
-import { QQbot } from './src/qqbot';
 import { BotManager } from './src/manager';
-import { CqApi } from './src/cq_api';
-import { MessageContext } from './src/context';
 import * as utils from './src/utils';
+import * as onebot from './src/onebot';
+import * as discord from './src/discord';
+import * as kaiheila from './src/kaiheila';
 
 export {
-    QQbot,
     BotManager,
-    CqApi,
-    MessageContext,
-    utils
+    utils,
+    onebot,
+    discord,
+    kaiheila
 };

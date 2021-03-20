@@ -1,5 +1,5 @@
 'use strict';
-import { QQbot } from 'qqbot';
+import { QQbot } from 'onebot/qqbot';
 
 export class BotManager {
     bots: Array<QQbot>;

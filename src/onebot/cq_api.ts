@@ -1,6 +1,6 @@
 'use strict';
 
-import { QQbot, MyWebSocket } from 'qqbot';
+import { QQbot, MyWebSocket } from 'onebot/qqbot';
 
 import { nanoid } from 'nanoid';
 import * as chalk from 'chalk';
