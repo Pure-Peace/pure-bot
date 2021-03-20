@@ -41,7 +41,7 @@ ws_reverse_servers: [
 index.js
 
 ```javascript
-const { QQbot } = require('pure-bot');
+const { onebot: { QQbot } } = require('pure-bot');
 
 const bot = new QQbot({
     name: '阿光',
@@ -451,7 +451,7 @@ bot.error('hi')
 index.js
 
 ```javascript
-const { QQbot } = require('pure-bot');
+const { onebot: { QQbot } } = require('pure-bot');
 
 const bot1 = new QQbot({
     name: '阿猫',

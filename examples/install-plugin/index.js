@@ -1,5 +1,5 @@
 'use strict';
-const { QQbot, utils } = require('../../dist');
+const { onebot: { QQbot }, utils } = require('../../dist');
 
 utils.showBanner();
 
