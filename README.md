@@ -1246,3 +1246,12 @@ checkUrlSafely (params: { url: string } = { url: undefined }, timeout: number = 
 ## MIT
 
 Pure-Peace
+
+### 特别感谢
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars.githubusercontent.com/u/10007589?&v=4" width="100px;" alt="arily"/><br /><sub><b>arily（阿日）</b></sub>](https://github.com/arily)<br /> |
+| :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
