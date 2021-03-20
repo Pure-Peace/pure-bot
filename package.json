@@ -23,7 +23,7 @@
     "dev": "cross-env NODE_ENV=development node example.js",
     "prod": "cross-env NODE_ENV=development node example.js",
     "lint": "eslint --ext .js,.ts,.tsx test/ src/",
-    "publish": "tsc && npm publish"
+    "publish": "tsc"
   },
   "author": "Pure-Peace",
   "license": "MIT",
