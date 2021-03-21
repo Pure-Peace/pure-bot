@@ -16,9 +16,7 @@ type RecivedMessage = MessageSegment & {
     id: string,
     text: string,
     raw: string,
-    segments: [MessageSegment] | {
-        get: () => [MessageSegment]
-    },
+    segments: [MessageSegment],
     sender: {
         name?: string,
         id: string
