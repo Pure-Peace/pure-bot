@@ -25,7 +25,7 @@ namespace Plugin{
     export type HookHandler = (ctx: MessageContext, instance: any) => void;
     export type Instance = any;
     export interface Interface {
-        create: (instance: Instance) => ChainableHandler
+        create: (this: Instance) => ChainableHandler
         instance: (options: any) => Instance;
         hooks: Record<string, HookHandler>
     }
