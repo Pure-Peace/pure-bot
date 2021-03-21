@@ -64,25 +64,33 @@ module.exports = {
     },
     // database: no-cache
     database: {
+        // getter, setter and method have instance as this
         fields: {
             user: {
                 lastActivity: {
-                    get (user, instance) {
+                    get (user) {
                         return user.lastActivity || null;
                     },
-                    set (user, instance) {
-                        user.lastActivity = new Date();
+                    set (user, newValue) {
+                        user.lastActivity = newValue;
                     }
                 }
             },
             channel: {
                 LastActiveUser: {
-                    get (channel, instance) {
+                    get (channel) {
                         return channel.lastActiveUser || null;
                     },
-                    set (channel, newValue, instance) {
+                    set (channel, newValue) {
                         channel.lastActiveUser = newValue;
                     }
+                }
+            }
+        },
+        methods: {
+            user: {
+                update (user) {
+                    user.lastActivity = new Date();
                 }
             }
         },
@@ -90,7 +98,7 @@ module.exports = {
             user: {
                 lastActivity: {
                     type: Date,
-                    default: (instance) => new Date(0)
+                    default: () => new Date(0) // have instance as this
                 }
             },
             channel: {
