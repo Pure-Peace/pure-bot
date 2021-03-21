@@ -19,11 +19,11 @@ export declare class MyWebSocket extends WebSocket {
     sendJson: (data: any) => void;
 }
 
-type PluginHookHandler = (ctx: MessageContext, namespace: any) => void
+type PluginHookHandler = (ctx: MessageContext, instance: any) => void
 
 interface Plugin {
-    create: (options: any, namespace: any) => CallableFunction;
-    namespace: (options: any) => any;
+    create: (options: any, instance: any) => CallableFunction;
+    instance: (options: any) => any;
     hooks: Record<string, PluginHookHandler>
 }
 
@@ -757,14 +757,14 @@ export class QQbot {
 
     async initPlugin (plugin: Plugin, options = {}) {
         // init plugin
-        const namespace = await plugin.namespace(options);
+        const instance = await plugin.instance(options);
 
         // unmanaged hooks
         Object.entries(plugin.hooks).forEach(([eventName, handler]) => {
             this.info('installing unmanaged hook: ' + eventName);
             if (!this[eventName]) return this.warn('hook ' + eventName + ' not exists'); // throw new Error('hook' + eventName + 'not exists')
 
-            const cb = (ctx) => handler(ctx, namespace);
+            const cb = (ctx) => handler(ctx, instance);
             if (eventName === 'onMessage') return this.onMessage('common', cb);
             this[eventName](cb);
         });
@@ -772,9 +772,9 @@ export class QQbot {
         // todo: database
 
         // chainable function
-        const messageHandler = plugin.create(options, namespace);
+        const messageHandler = plugin.create(options, instance);
         return {
-            namespace,
+            instance,
             messageHandler
         };
     }
