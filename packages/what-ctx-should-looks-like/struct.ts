@@ -1,16 +1,21 @@
 type MessageSegment = {
-    id?: string,
-    text?: string,
-    notify?: string,
-    quote?: string,
-    file?: string,
-    image?: string,
-    toString?: () => string;
+    id?: string, // message id
+    text?: string, // message in text
+    raw?: string // raw message
+    notify?: string, // @<userId> in onebot
+    quote?: string, // reply in onebot
+    file?: string, // send | recive image
+    image?: string, // send | recive image
+    audio?: string, // send | recive audio
+    json?: JSON // send | recive json data
+    adaptiveCard?: JSON
 }
 type Message = string | MessageSegment
 
 type RecivedMessage = MessageSegment & {
     id: string,
+    text: string,
+    raw: string,
     segments: [MessageSegment] | {
         get: () => [MessageSegment]
     },
