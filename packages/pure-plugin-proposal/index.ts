@@ -64,7 +64,7 @@ module.exports = {
     },
     // database: no-cache
     database: {
-        methods: {
+        fields: {
             user: {
                 lastActivity: {
                     get (user, instance) {
