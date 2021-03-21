@@ -22,7 +22,7 @@ export declare class MyWebSocket extends WebSocket {
 namespace Plugin{
     export type NextFunction = (arg: void | CallableFunction) => void;
     export type ChainableHandler = (ctx: MessageContext, next: NextFunction) => any;
-    export type HookHandler = (ctx: MessageContext, instance: any) => void;
+    export type HookHandler = (this: any, ctx: MessageContext) => void;
     export type Instance = any;
     export interface Interface {
         create: (this: Instance) => ChainableHandler
