@@ -108,7 +108,7 @@ module.exports = {
             }
         },
         // declare collection, provided in ctx.database.collection[<key>] as MongoLike.collection(<key>)
-        collection: {
+        collections: {
             registeredUser: 'registered-users'
         }
     }
