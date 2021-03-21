@@ -1,14 +1,18 @@
-const singleton = {};
+const singleton: Record<any, any> = {
+    count: 0
+};
 
 module.exports = {
     name: 'pure-plugin-proposal',
     // return a instance
     instance (options) {
         return {
-            options
+            options,
+            instanceVariable: 0
         };
     },
     create () {
+        singleton.count += 1;
         console.log('have access to singleton variables', singleton);
         console.log('have access to plugin instance as this', this);
         return (ctx, next) => {
