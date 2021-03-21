@@ -24,5 +24,6 @@ module.exports = {
             'always',
             { omitLastInOneLineBlock: true }
         ]
-    }
+    },
+    ignorePatterns: ['dist/*']
 };
