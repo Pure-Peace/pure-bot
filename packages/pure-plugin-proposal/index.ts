@@ -8,7 +8,7 @@ module.exports = {
             options
         };
     },
-    create (options: Partial<any>, instance: Partial<any>) {
+    create (instance: Partial<any>) {
         console.log('have access to singleton variables', singleton);
         console.log('have access to plugin instance', instance);
         return (ctx, next) => {

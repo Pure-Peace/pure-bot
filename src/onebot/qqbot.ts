@@ -21,9 +21,11 @@ export declare class MyWebSocket extends WebSocket {
 
 type PluginHookHandler = (ctx: MessageContext, instance: any) => void
 
+type PluginInstance = any
+
 interface Plugin {
-    create: (options: any, instance: any) => CallableFunction;
-    instance: (options: any) => any;
+    create: (instance: PluginInstance) => (ctx: MessageContext, next: CallableFunction) => any;
+    instance: (options: any) => PluginInstance;
     hooks: Record<string, PluginHookHandler>
 }
 
@@ -772,7 +774,7 @@ export class QQbot {
         // todo: database
 
         // chainable function
-        const messageHandler = plugin.create(options, instance);
+        const messageHandler = plugin.create(instance);
         return {
             instance,
             messageHandler
