@@ -9,9 +9,8 @@ type MessageSegment = {
 }
 type Message = string | MessageSegment
 
-type MessageContextMessage = MessageSegment & {
+type RecivedMessage = MessageSegment & {
     id: string,
-    text?: string,
     segments: [MessageSegment] | {
         get: () => [MessageSegment]
     },
@@ -24,13 +23,13 @@ type MessageContextMessage = MessageSegment & {
 type PlatformType = 'onebot'
 type MessageType = 'privateMessage' | 'publicMessage' | 'channelMessage' | 'groupMessage'
 
-type TypedMessageContext = Partial<Record<MessageType, MessageContextMessage>>
+type TypedMessageContext = Partial<Record<MessageType, RecivedMessage>>
 
 type PlatformContext = Partial<Record<PlatformType, TypedMessageContext>>
 
 type MessageContext = PlatformContext & {
     platform: string,
-    message: MessageContextMessage
+    message: RecivedMessage
     quote: (msg: Message | [Message]) => Promise<void>,
     send: (msg: Message | [Message]) => Promise<void>
 }
