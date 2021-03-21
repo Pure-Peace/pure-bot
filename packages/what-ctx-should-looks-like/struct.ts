@@ -13,13 +13,17 @@ type MessageSegment = {
 type Message = string | MessageSegment
 
 type RecivedMessage = MessageSegment & {
-    id: string,
+    id: string | {
+        toString: () => string
+    },
     text: string,
     raw: string,
     segments: [MessageSegment],
     sender: {
         name?: string,
-        id: string
+        id: string | {
+            toString: () => string
+        },
     }
 }
 
@@ -36,19 +40,16 @@ type MessageContext = PlatformContext & {
     quote: (msg: Message | [Message]) => Promise<void>,
     send: (msg: Message | [Message]) => Promise<void>
 }
-
+const text = 'suitable message type!';
 const MessageEvent = {
     platform: 'onebot',
     message: {
         id: '123456',
-        text: 'suitable message type!',
-        segments: {
-            get () {
-                return [{
-                    text: MessageEvent.message.text
-                } as Message];
-            }
-        },
+        text,
+        raw: text,
+        segments: [{
+            text: text
+        }],
         sender: {
             name: 'ari',
             id: {
@@ -78,7 +79,7 @@ const MessageEvent = {
             ...quote
         });
     }
-} as unknown as MessageContext;
+} as MessageContext;
 
 const PublicMessageEvent = Object.assign({
     get publicMessage () {
