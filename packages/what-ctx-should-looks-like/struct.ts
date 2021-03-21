@@ -21,7 +21,7 @@ type RecivedMessage = MessageSegment & {
 }
 
 type PlatformType = 'onebot'
-type MessageType = 'privateMessage' | 'publicMessage' | 'channelMessage' | 'groupMessage'
+type MessageType = 'privateMessage' | 'publicMessage' | 'channelMessage' | 'groupMessage' | 'message'
 
 type TypedMessageContext = Partial<Record<MessageType, RecivedMessage>>
 
@@ -81,12 +81,12 @@ const PublicMessageEvent = Object.assign({
     get publicMessage () {
         return this.message;
     }
-}, MessageEvent) as unknown as MessageContext;
+}, MessageEvent) as MessageContext;
 const GroupMessageEvent = Object.assign({
     get groupMessage () {
         return this.message;
     }
-}, PublicMessageEvent) as unknown as MessageContext;
+}, PublicMessageEvent) as MessageContext;
 const OnebotGroupMessageEvent = Object.assign({
     get groupMessage () {
         return this.message;
@@ -94,7 +94,7 @@ const OnebotGroupMessageEvent = Object.assign({
     get onebot () {
         return this;
     }
-}, PublicMessageEvent) as unknown as MessageContext;
+}, PublicMessageEvent) as MessageContext;
 
 console.log(GroupMessageEvent.message === GroupMessageEvent.onebot?.groupMessage);
 console.log(OnebotGroupMessageEvent.message === OnebotGroupMessageEvent.onebot?.groupMessage);
