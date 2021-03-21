@@ -19,15 +19,17 @@ export declare class MyWebSocket extends WebSocket {
     sendJson: (data: any) => void;
 }
 
-type PluginHookHandler = (ctx: MessageContext, instance: any) => void
-
-type PluginInstance = any
-
-interface Plugin {
-    create: (instance: PluginInstance) => (ctx: MessageContext, next: CallableFunction) => any;
-    instance: (options: any) => PluginInstance;
-    hooks: Record<string, PluginHookHandler>
-}
+namespace Plugin{
+    export type NextFunction = (arg: void | CallableFunction) => void;
+    export type ChainableHandler = (ctx: MessageContext, next: NextFunction) => any;
+    export type HookHandler = (ctx: MessageContext, instance: any) => void;
+    export type Instance = any;
+    export interface Interface {
+        create: (instance: Instance) => ChainableHandler
+        instance: (options: any) => Instance;
+        hooks: Record<string, HookHandler>
+    }
+};
 
 type handler = (ctx: MessageContext) => any;
 type afterHandler = (ctx: MessageContext, result: any) => any;
@@ -757,7 +759,7 @@ export class QQbot {
         return this.onMessage('group', handler, ...args);
     }
 
-    async initPlugin (plugin: Plugin, options = {}) {
+    async initPlugin (plugin: Plugin.Interface, options: Partial<any> = {}) {
         // init plugin
         const instance = await plugin.instance(options);
 
@@ -766,7 +768,7 @@ export class QQbot {
             this.info('installing unmanaged hook: ' + eventName);
             if (!this[eventName]) return this.warn('hook ' + eventName + ' not exists'); // throw new Error('hook' + eventName + 'not exists')
 
-            const cb = (ctx) => handler(ctx, instance);
+            const cb = (ctx) => handler.apply(instance, [ctx]);
             if (eventName === 'onMessage') return this.onMessage('common', cb);
             this[eventName](cb);
         });
@@ -774,15 +776,16 @@ export class QQbot {
         // todo: database
 
         // chainable function
-        const messageHandler = plugin.create(instance);
+        const messageHandler = plugin.create.apply(instance);
         return {
             instance,
             messageHandler
         };
     }
 
-    async use (plugin: Plugin) {
+    async use (plugin: Plugin.Interface) {
         const pluginCtx = await this.initPlugin(plugin);
+        // todo: uuid plugin
         this.plugins.set(Math.random(), pluginCtx);
     }
 
