@@ -58,8 +58,8 @@ const bot = new QQbot({
 // ctx是消息上下文MessageContext
 bot.onMessage('private', async (ctx) => {
     // bot收到你的消息后将会进行回复。
-    // 执行api（如fastReply）将统一返回promise
-    await ctx.fastReply('hello, world')
+    // 执行api（如reply）将统一返回promise
+    await ctx.reply('hello, world')
 });
 ```
 
@@ -125,7 +125,7 @@ bot.onLifecycle (lifecycle: ('connect' | 'enable' | 'disable'), handler: (AsyncF
 bot.onMessage('private', async (ctx) => {
     try {
         // 对发送者进行回复，同时等待onbot协议返回结果
-        const result = await ctx.fastReply('666');
+        const result = await ctx.reply('666');
         return result;
     } catch (err) {
         bot.error(err);
@@ -410,7 +410,7 @@ bot.removeBeforeChecker('test')
 bot.onMessage('private', async (ctx) => {
     // 使用try catch
     try {
-        await ctx.fastReply('hello, world');
+        await ctx.reply('hello, world');
     } catch (err) {
         // 使用bot内置logger打印错误。
         bot.error(err);
@@ -422,7 +422,7 @@ bot.onMessage('private', async (ctx) => {
 
 ```javascript
 bot.onMessage('private', (ctx) => {
-    ctx.fastReply('hello, world').then((res) => {
+    ctx.reply('hello, world').then((res) => {
         // 处理...
     }).catch((err) => {
         // 处理

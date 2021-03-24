@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import * as chalk from 'chalk';
 import * as dayjs from 'dayjs';
 
-import { MessageContext } from './context';
+import { MessageContext, contextFactory } from './context';
 import { Duration, isAsyncFn } from '../utils';
 import { createChain } from '../../packages/chain-of-responsibility';
 
@@ -450,18 +450,17 @@ export class QQbot {
         }
         msg = parseResult.value;
 
-        // build context
-        const ctx = new MessageContext(msg, ws, this);
-
-        // do before check
-        if (!this.beforeHandleCheck(ctx)) {
-            return;
-        }
-
         // handle event
         const event = msg.post_type;
         const handler = this.eventHandlers[event];
         if (handler) {
+            // build context
+            const ctx = contextFactory(event, msg, ws, this);
+
+            // do before check
+            if (!await this.beforeHandleCheck(ctx)) {
+                return;
+            }
             handler(ctx);
         } else if (msg.echo) {
             this.eventEmitter.emit(msg.echo, msg);
@@ -582,9 +581,12 @@ export class QQbot {
     }
 
     async beforeHandleCheck (ctx: MessageContext) {
-        for (const checker of Object.values(this.beforeHandleCheckers)) {
+        for (const [name, checker] of Object.entries(this.beforeHandleCheckers)) {
             const checkResult = await checker(ctx);
             if (checkResult === false) {
+                if (this.debug) {
+                    this.warn(`before handler checker ${name} prevented.`);
+                }
                 return false;
             }
         }

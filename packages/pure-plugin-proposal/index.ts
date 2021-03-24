@@ -1,3 +1,4 @@
+// @ts-nocheck
 const singleton: Record<any, any> = {
     count: 0
 };

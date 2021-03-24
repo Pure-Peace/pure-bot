@@ -1,3 +1,4 @@
+// @ts-nocheck
 const createChain = (processors) => {
     const onMessage = async (...args) => {
         const tempMiddlewares = [];

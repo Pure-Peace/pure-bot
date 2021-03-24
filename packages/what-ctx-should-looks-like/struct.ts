@@ -1,3 +1,4 @@
+// @ts-nocheck
 type MessageSegment = {
     id?: string, // message id
     text?: string, // message in text

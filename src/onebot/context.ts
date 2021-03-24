@@ -2,6 +2,56 @@
 import { MyWebSocket, QQbot } from 'onebot/qqbot';
 import { CqApi } from './cq_api';
 
+export type PostType = 'meta_event' | 'request' | 'notice' | 'message';
+export type MessageBase = {
+    time: number,
+    self_id: number,
+    post_type: PostType
+};
+
+export namespace MessageEvent {
+    export type MessageType = 'private' | 'group';
+    export type PrivateSubType = 'friend' | 'group' | 'other';
+    export type GroupSubType = 'normal' | 'anonymous' | 'notice';
+
+    export type Public = MessageBase & {
+        post_type: 'message',
+        message_type: MessageType,
+        sub_type: PrivateSubType,
+        message_id: number,
+        user_id: number,
+        message: object,
+        raw_message: string,
+        font: number,
+        sender: object
+    };
+
+    export type Private = Public & {
+        message_type: 'private',
+        sub_type: PrivateSubType,
+    };
+
+    export type Group = Public & {
+        message_type: 'group',
+        sub_type: GroupSubType,
+        group_id: number,
+        anonymous: object,
+    };
+};
+
+/* export namespace NoticeEvent {
+    export type NoticeTypeGroup = 'group_upload' | 'group_admin' | 'group_decrease' | 'group_increase' | 'group_ban' | 'group_recall' |'notify';
+    export type NoticeTypePrivate = 'friend_recall' | 'friend_add';
+    export type GroupSubType =
+
+}; */
+
+export const contextFactory = (event: PostType, msg: any, ws: MyWebSocket, bot: QQbot): MessageContext => {
+    if (event === 'message') {
+        return new MessageContext(msg as MessageEvent.Private, ws, bot);
+    }
+};
+
 export class MessageContext {
     msg: any;
     ws: MyWebSocket;
@@ -48,7 +98,7 @@ export class MessageContext {
      * @param {any} message - 回复的消息，可以是任意格式。
      * @param {boolean} auto_escape - 不解析消息内容
      */
-    fastReply (message: any, auto_escape: boolean = false) {
+    reply (message: any, auto_escape: boolean = false) {
         if (this.group_id) {
             return this.client.sendGroupMsg({ group_id: this.group_id, message, auto_escape });
         }

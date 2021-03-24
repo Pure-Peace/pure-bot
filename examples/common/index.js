@@ -44,7 +44,8 @@ bot.addBeforeChecker('test1', async (ctx) => {
 bot.onMessage('private', async (ctx) => {
     try {
         // 进行回复，病等待cq api返回结果
-        const result = await ctx.fastReply('快速回复');
+        bot.info(ctx);
+        const result = await ctx.reply('快速回复');
         return result;
     } catch (err) {
         bot.error(err);
@@ -77,7 +78,7 @@ bot.onMessage('private', async (ctx) => {
         bot.info('before checker');
 
         // 如果发送消息的qq不等于xx，则拒绝处理
-        if (ctx.user_id !== 111) {
+        if (ctx.user_id !== 940857703) {
             console.log('拒绝！');
             return false;
         }
@@ -93,7 +94,7 @@ bot.onMessage('private', async (ctx) => {
 // qq群聊事件，对应：message.group.common
 bot.onMessage('group', async (ctx) => {
     try {
-        await ctx.fastReply(666);
+        // await ctx.reply(666);
     } catch (err) {
         console.log(err);
     }
@@ -110,8 +111,8 @@ bot.onMessage('group', async (ctx) => {
     // 使用ctx.client 调用 CQ Api
     // 这是获取群聊信息
     try {
-        const result = await ctx.client.getTargetGroupInfo({ group_id: ctx.group_id });
-        bot.info('成功获取群聊消息：', result);
+        // const result = await ctx.client.getTargetGroupInfo({ group_id: ctx.group_id });
+        // bot.info('成功获取群聊消息：', result);
     } catch (err) {
         bot.error('获取群聊信息失败，错误：', err);
     }
