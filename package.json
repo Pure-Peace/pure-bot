@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@types/ws": "^7.4.0",
+    "axios": "^0.21.1",
     "boxen": "^4.2.0",
     "chalk": "^3.0.0",
     "dayjs": "^1.10.4",
