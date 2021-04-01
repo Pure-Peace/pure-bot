@@ -39,7 +39,8 @@ type MessageContext = PlatformContext & {
     platform: string,
     message: RecivedMessage
     quote: (msg: Message | [Message]) => Promise<void>,
-    send: (msg: Message | [Message]) => Promise<void>
+    send: (msg: Message | [Message]) => Promise<void>,
+    bots: [Bot: Object]
 }
 const text = 'suitable message type!';
 const MessageEvent = {
