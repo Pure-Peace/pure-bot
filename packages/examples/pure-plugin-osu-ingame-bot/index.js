@@ -19,27 +19,28 @@ module.exports = {
     },
     create () {
         return (ctx, next) => {
-            if (!ctx.irc?.osu?.message) return next(); // not a osu irc message event
+            const m = ctx.irc?.osu?.message;
+            if (!m) return next();
 
-            if (ctx.message.text?.startsWith('!help')) {
+            if (m.text?.startsWith('!help')) {
                 return ctx.send({
-                    at: ctx.message.sender?.id,
+                    at: m.sender?.id,
                     text: template('help', { locale: this.database?.user?.locale || 'en-GB' })
                 });
-            } else if (ctx.message.text?.startsWith('!mp')) {
-                if (ctx.message.text.startsWith('!mp close')) {
-                    const room = ctx.message.text.slice(9).trim();
+            } else if (m.text?.startsWith('!mp')) {
+                if (m.text.startsWith('!mp close')) {
+                    const room = m.text.slice(9).trim();
                     try {
-                        const result = await this.apiV2.sudoUser(ctx.message.sender.id).closeRoom(room);
+                        const result = await this.apiV2.sudoUser(m.sender.id).closeRoom(room);
                         ctx.send({
-                            at: ctx.message.sender?.id,
+                            at: m.sender?.id,
                             text: result.success
                                 ? template('mp.close.success', { room, locale: this.database?.user?.locale || 'en-GB' })
                                 : template('mp.close.fail', { room, locale: this.database?.user?.locale || 'en-GB' })
                         });
                     } catch (error) {
                         ctx.send({
-                            at: ctx.message.sender?.id,
+                            at: m.sender?.id,
                             text: template('mp.close.fail', { reason: error.reason, locale: this.database?.user?.locale || 'en-GB' })
                         });
                     }
