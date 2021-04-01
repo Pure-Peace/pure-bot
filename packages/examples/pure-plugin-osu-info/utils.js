@@ -12,7 +12,7 @@ function unescapeSpecialChars (chars) {
     return chars;
 }
 
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 module.exports = {
     unescapeSpecialChars,
