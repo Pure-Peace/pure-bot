@@ -1,0 +1,14 @@
+{
+  "name": "pure-plugin-blackfarts",
+  "version": "1.0.0",
+  "description": "example plugin",
+  "main": "index.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "arily",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-cluster": "^0.22.0"
+  }
+}
