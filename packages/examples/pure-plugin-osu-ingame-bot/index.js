@@ -1,9 +1,5 @@
-const { default: axios } = require('axios');
 const OsuApiV2 = require('some-dependency');
 const template = require('./help/i18n');
-const defaultOptions = {
-    base: 'https://info.osustuff.ri.mk/cn'
-};
 
 module.exports = {
     name: 'pure-plugin-osu-ingame-bot',
