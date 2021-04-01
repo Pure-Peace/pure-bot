@@ -7,8 +7,7 @@ module.exports = {
         const apiInstance = new OsuApiV2();
         return {
             options: {
-                ...defaultOptions,
-                options
+                ...options
             },
             apiV2: apiInstance
         };

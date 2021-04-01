@@ -46,7 +46,7 @@ module.exports = {
         return {
             options: {
                 ...defaultOptions,
-                options
+                ...options
             },
             cluster
         };
