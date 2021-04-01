@@ -15,7 +15,7 @@ module.exports = {
 
         });
 
-        cluster.task(async ({ page, data: { url, meta } }) => {
+        cluster.task(async ({ page, data: { url, ctx } }) => {
             console.log(url);
             await page.setViewport(VIEWPORT);
             await page.goto(url, {
@@ -28,8 +28,12 @@ module.exports = {
                 fullPage: true
             });
             // Store screenshot, do something else
-            const cqcode = `[CQ:image,file=base64://${screen}]`;
-            meta.send(cqcode).catch(err => console.warn(err));
+            // const cqcode = `[CQ:image,file=base64://${screen}]`;
+            meta.quote({
+                image: {
+                    file: `base64://${screen}`
+                }
+            }).catch(err => console.warn(err));
         });
         cluster.on('taskerror', (err, data, willRetry) => {
             if (willRetry) {
@@ -65,7 +69,7 @@ module.exports = {
 
                 await this.cluster.execute({
                     url: `${this.options.base}/recent/${username}/${mode || ''}`,
-                    meta
+                    ctx
                 });
             },
             (ctx, next) => {
