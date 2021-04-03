@@ -13,7 +13,11 @@ export default {
         setInterval(() => {
             this.myConnection.emit('message', {
                 scope: 'private',
-                content: 'hi'
+                rawMessage: 'hi',
+                sender: {
+                    id: '133466799',
+                    name: 'arily'
+                }
             });
         }, 1000);
         return {

@@ -18,6 +18,8 @@ export default class BaseBot implements Bot {
     }>>
 
     middlewares: Map<Symbol, Module.ChainableHandler>
+
+    // createChain result
     activeMiddlewareChain: Module.HookHandler
     options: any;
     inboundEvents: EventEmitter;
@@ -196,7 +198,13 @@ export default class BaseBot implements Bot {
         this.activeMiddlewareChain = createChain([...this.middlewares.values()]);
     }
 
-    async filter (context) {
+    /**
+     * filtering out message
+     * true for message passed the filter
+     * @param context
+     * @returns {Promise<boolean>}
+     */
+    async filter (context: Context.Context) {
         for (const [, filter] of this.filters.entries()) {
             if (!await filter(context)) return false;
             else continue;
@@ -204,13 +212,27 @@ export default class BaseBot implements Bot {
         return true;
     }
 
+    /**
+     * create context based on messageEvent (interface not defined yet)
+     * @param messageEvent for now it's { rawMessage: string, scope: 'private' | 'public'..., sender: Context.Sender }
+     * @param symbol platform symbol
+     */
     async inboundMessage (messageEvent, symbol: Symbol) {
         const platform = this.platforms.get(symbol);
         const context = await this.createContext(messageEvent, platform);
         this.handleInboundMessage(context);
     }
 
-    async handleInboundMessage (context) {
+    /**
+     * handle inbound message
+     * emit any message to inboundEvents,
+     * filtering out messages use installed filters,
+     * emit filtered message to filteredEvents,
+     * calls handleFilteredMessage method
+     * @param context
+     * @returns {void}
+     */
+    async handleInboundMessage (context: Context.Context) {
         // all messages: usable to extract events for chaining events
         this.inboundEvents.emit('message', context);
         if (!await this.filter(context)) return;
@@ -219,17 +241,22 @@ export default class BaseBot implements Bot {
         this.handleFilteredMessage(context);
     }
 
-    async handleFilteredMessage (context) {
+    /**
+     * handle filtered message
+     * Chained Plugin handler will be invoked here
+     * @param context
+     */
+    async handleFilteredMessage (context: Context.Context) {
         this.activeMiddlewareChain(context);
     }
 
-    async createContext (event, platform) {
+    async createContext (event, platform: Module.Platform) {
         const message: Context.Message = {
-            text: event.content
+            text: event.rawMessage
         };
         return {
             message,
             send: platform.send.bind(platform)
-        } as Context.MessageContext;
+        } as Context.Context;
     }
 }
