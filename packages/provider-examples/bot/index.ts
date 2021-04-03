@@ -242,7 +242,7 @@ export default class BaseBot implements Bot {
     }
 
     /**
-     * handle filtered message
+     * handle filtered message.
      * Chained Plugin handler will be invoked here
      * @param context
      */
@@ -250,6 +250,12 @@ export default class BaseBot implements Bot {
         this.activeMiddlewareChain(context);
     }
 
+    /**
+     * *for test* create a Context.Context from provider event
+     * @param event any
+     * @param platform
+     * @returns {Context.Context}
+     */
     async createContext (event, platform: Module.Platform) {
         const message: Context.Message = {
             text: event.rawMessage
