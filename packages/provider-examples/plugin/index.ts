@@ -8,15 +8,14 @@ module.exports = {
     name: 'pure-plugin-proposal',
     // return a instance
     instance (options) {
+        singleton.count += 1;
         return {
+            count: singleton.count,
             options,
             instanceVariable: 0
         };
     },
     create () {
-        singleton.count += 1;
-        console.log('installed plugin, count=', singleton.count);
-        this.count = singleton.count;
         return (ctx, next) => {
             console.log(`plugin[${this.count}]`, 'plugin recived message', ctx.message);
         };

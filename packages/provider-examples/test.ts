@@ -10,10 +10,18 @@ const installedPlugin = bot.use(plugin, {});
 bot2.use(plugin, {});
 
 setTimeout(async () => {
-    bot.remove(await installedPlugin);
+    const pluginInstance = await bot.remove(await installedPlugin);
     console.log('removed plugin from bot[1]');
-}, 3000);
+    setTimeout(() => {
+        bot.reuse(plugin, pluginInstance);
+        console.log('bot[1] reuses plugin instance created by bot[1]');
+    }, 2000);
+}, 2000);
 setTimeout(async () => {
-    bot2.remove(await bot2Provider);
+    const providerInstance = await bot2.remove(await bot2Provider);
     console.log('removed provider from bot[2]');
-}, 6000);
+    setTimeout(() => {
+        bot2.reuse(provider, providerInstance);
+        console.log('bot[2] reuses provider instance created by bot[1]');
+    }, 2000);
+}, 2000);
