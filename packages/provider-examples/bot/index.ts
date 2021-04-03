@@ -1,5 +1,5 @@
 import { Bot, Module } from '../../../src/types';
-// import { createChain } from '../../chain-of-responsibility';
+import { createChain } from '../../chain-of-responsibility';
 import EventEmitter = require('node:events');
 export default class BaseBot implements Bot {
     instances: Map<Symbol, Module.Instance>
