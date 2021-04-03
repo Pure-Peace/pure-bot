@@ -34,7 +34,18 @@ export default class BaseBot implements Bot {
     }
 
     async use (module, options) {
-        const { symbol, instance } = await this.createModuleInstance(module, options);
+        const instance = await module.instance(options);
+        return this.#installInstance(module, instance);
+    }
+
+    async reuse (module, instance) {
+        if ([...this.instances.values()].includes(instance)) throw new Error('instance is already in the bot');
+        return this.#installInstance(module, instance);
+    }
+
+    // @ts-expect-error: private function not supported yet but it works
+    async #installInstance (module, instance) {
+        const symbol = Symbol(`instance[${module.name}]`);
         this.instances.set(symbol, instance);
         if (module.provide) this.installProvider(module, instance, symbol);
         if (module.create) this.installPlugin(module, instance, symbol);
@@ -46,6 +57,8 @@ export default class BaseBot implements Bot {
         if (!instance) return;
         if (this.platforms.get(symbol)) this.removeProvider(symbol);
         if (this.plugins.get(symbol)) this.removePlugin(symbol);
+
+        return instance;
     }
 
     async installProvider (module: Module.Provider, instance, symbol) {
@@ -73,15 +86,6 @@ export default class BaseBot implements Bot {
         if (plugin.create) this.removePluginMiddleware(symbol);
         this.plugins.delete(symbol);
         this.instances.delete(symbol);
-    }
-
-    async createModuleInstance (module: Module.Interface, options) {
-        const instance = await module.instance(options);
-        const rtn = {
-            symbol: Symbol(`instance[${module.name}]`),
-            instance
-        };
-        return rtn;
     }
 
     on (hook, handler) {
@@ -137,7 +141,7 @@ export default class BaseBot implements Bot {
     }
 
     updateMiddlewareChain () {
-        this.activeMiddlewareChain = createChain(Array.from(this.middlewares).map(([, messageHandler]) => messageHandler));
+        this.activeMiddlewareChain = createChain([...this.middlewares.values()]);
     }
 
     async handleMessage (messageEvent, symbol: Symbol) {
