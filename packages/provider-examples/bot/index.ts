@@ -1,4 +1,4 @@
-import { Bot, Module } from '../../../src/types';
+import { Bot, Module, Context } from '../../../src/types';
 import { createChain } from '../../chain-of-responsibility';
 import { EventEmitter } from 'events';
 export default class BaseBot implements Bot {
@@ -23,6 +23,7 @@ export default class BaseBot implements Bot {
     constructor (options) {
         this.instances = new Map();
         // this.providers = new Map();
+        this.platforms = new Map();
         this.platformHooks = new Map();
         this.plugins = new Map();
         this.pluginHooks = new Map();
@@ -34,6 +35,7 @@ export default class BaseBot implements Bot {
 
     async use (module, options) {
         const { symbol, instance } = await this.createModuleInstance(module, options);
+        this.instances.set(symbol, instance);
         if (module.provide) this.installProvider(module, instance, symbol);
         if (module.create) this.installPlugin(module, instance, symbol);
         return symbol;
@@ -89,7 +91,7 @@ export default class BaseBot implements Bot {
     hookPlatform (symbol: Symbol) {
         const platform = this.platforms.get(symbol);
         // create more handlers later
-        const handler = this.handleMessage.bind(this);
+        const handler = (data) => this.handleMessage(data, symbol);
         const handlers = [{ hookName: 'message', handler }];
         this.platformHooks.set(symbol, handlers);
         handlers.forEach(({ hookName, handler }) => platform.source.on(hookName, handler));
@@ -138,12 +140,19 @@ export default class BaseBot implements Bot {
         this.activeMiddlewareChain = createChain(Array.from(this.middlewares).map(([, messageHandler]) => messageHandler));
     }
 
-    handleMessage (messageEvent) {
-        const context = this.createContext(messageEvent);
+    handleMessage (messageEvent, symbol: Symbol) {
+        const platform = this.platforms.get(symbol);
+        const context = this.createContext(messageEvent, platform);
         this.events.emit('message', context);
     }
 
-    async createContext (event) {
-        // transform event from platform to context
+    async createContext (event, platform) {
+        const message: Context.Message = {
+            text: event.content
+        };
+        return {
+            message,
+            send: platform.send.bind(platform)
+        } as Context.MessageContext;
     }
 }
