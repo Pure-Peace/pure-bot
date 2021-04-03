@@ -1,6 +1,6 @@
 import { Bot, Module } from '../../../src/types';
 import { createChain } from '../../chain-of-responsibility';
-import EventEmitter = require('node:events');
+import { EventEmitter } from 'events';
 export default class BaseBot implements Bot {
     instances: Map<Symbol, Module.Instance>
     // providers: Map<Symbol, Module.Provider>
@@ -24,6 +24,8 @@ export default class BaseBot implements Bot {
         this.instances = new Map();
         // this.providers = new Map();
         this.platformHooks = new Map();
+        this.plugins = new Map();
+        this.pluginHooks = new Map();
         this.options = options;
         this.events = new EventEmitter();
         this.middlewares = new Map();
