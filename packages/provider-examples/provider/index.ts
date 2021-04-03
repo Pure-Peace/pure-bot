@@ -10,7 +10,7 @@ export default {
         };
     },
     provide () {
-        setTimeout(() => {
+        setInterval(() => {
             this.myConnection.emit('message', {
                 scope: 'private',
                 content: 'hi'
