@@ -1,4 +1,4 @@
-import EventEmitter = require('node:events');
+import { EventEmitter } from 'events';
 
 export type PlatformType = 'onebot' | 'discord' | 'kaiheila';
 export type MessageType =
