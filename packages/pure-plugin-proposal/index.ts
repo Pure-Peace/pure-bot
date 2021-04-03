@@ -32,17 +32,17 @@ module.exports = {
             this.someUndefinedVariables = ctx.database?.channel?.someUndefinedVariables; // Null, undefined or throw error?
             ctx.database.user.lastActivity = new Date();
 
-            // reply shortcut
-            ctx.reply({
-                content: 'quick reply'
+            // quote shortcut
+            ctx.quote({
+                text: 'quick quote'
             });
             // or
-            ctx.reply('quick reply');
+            ctx.quote('quick quote');
 
             // equals to
             ctx.send({
-                reply: ctx,
-                content: 'quick reply'
+                quote: ctx.message.id,
+                text: 'quick quote'
             });
         };
     },

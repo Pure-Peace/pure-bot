@@ -22,6 +22,14 @@ export namespace Context {
     adaptiveCard?: JSON;
   };
   export type Message = string | MessageSegment;
+  export type Sender = {
+    name?: string;
+    id:
+      | string
+      | {
+          toString: () => string;
+        };
+  };
 
   type RecivedMessage = MessageSegment & {
     id:
@@ -32,14 +40,7 @@ export namespace Context {
     text: string;
     raw: string;
     segments: [MessageSegment];
-    sender: {
-      name?: string;
-      id:
-        | string
-        | {
-            toString: () => string;
-          };
-    };
+    sender: Sender;
   };
 
   type TypedMessageContext = Partial<Record<MessageType, RecivedMessage>>;
@@ -54,7 +55,14 @@ export namespace Context {
     send: (msg: Message | [Message]) => Promise<void>;
   };
 
-  export type Context = MessageContext | any;
+  export type Context = MessageContext & {
+    sender: Sender;
+    database?: {
+      user: any,
+      channel: any,
+      bot: any,
+    }
+  };
 }
 
 export namespace Module {
@@ -65,13 +73,16 @@ export namespace Module {
   ) => any;
   export type Instance = any;
   export type HookHandler = (this: Instance, ctx: Context.Context) => void;
-  export type FilterHandler = (this: Instance, ctx: Context.Context) => Promise<boolean>
+  export type FilterHandler = (
+    this: Instance,
+    ctx: Context.Context
+  ) => Promise<boolean>;
   export interface Platform {
     source: EventEmitter;
     send: (target: any, message: Context.Message) => any;
   }
   export interface Interface {
-    name: string,
+    name: string;
     instance: (options: any) => Instance;
 
     database?: Partial<{
@@ -94,19 +105,19 @@ export namespace Module {
     provide: (this: Instance) => Platform;
   }
   export interface Filter extends Interface {
-    filter: FilterHandler
+    filter: FilterHandler;
   }
 }
 
 export interface Bot {
-  use: (module: Module.Interface, options: any) => any,
-  remove: (symbol: Symbol) => any,
-  reuse: (module: Module.Interface, instance: Module.Instance) => any,
+  use: (module: Module.Interface, options: any) => any;
+  remove: (symbol: Symbol) => any;
+  reuse: (module: Module.Interface, instance: Module.Instance) => any;
   // on: (eventName: string, handle: Module.HookHandler) => any;
 
   // not first problem: graceful restart & stop
-  stop?: () => Promise<void>
-  resume?: () => Promise<void>
-  reload?: () => Promise<void>
-  restart?: () => Promise<void>
+  stop?: () => Promise<void>;
+  resume?: () => Promise<void>;
+  reload?: () => Promise<void>;
+  restart?: () => Promise<void>;
 }

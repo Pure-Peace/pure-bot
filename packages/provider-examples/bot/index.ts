@@ -43,7 +43,7 @@ export default class BaseBot implements Bot {
      * @param options
      * @returns {Symbol}
      */
-    async use (module: Module.Provider | Module.Plugin | Module.Filter, options) {
+    async use (module: Module.Provider | Module.Plugin | Module.Filter, options: any = {}) {
         if (!module.instance) throw new Error('module should have an instance method');
 
         const instance = await module.instance(options);
@@ -56,7 +56,7 @@ export default class BaseBot implements Bot {
      * @param instance
      * @returns {Symbol}
      */
-    async reuse (module, instance) {
+    async reuse (module: Module.Provider | Module.Plugin | Module.Filter, instance: Module.Instance) {
         if ([...this.instances.values()].includes(instance)) throw new Error('instance is already in the bot');
         return this.#installInstance(module, instance);
     }
@@ -68,7 +68,7 @@ export default class BaseBot implements Bot {
      * @returns {Symbol}
      */
     // @ts-expect-error: private function not supported yet but it works
-    async #installInstance (module, instance) {
+    async #installInstance (module, instance: Module.Instance) {
         const symbol = Symbol(`instance[${module.name}]`);
         this.instances.set(symbol, instance);
         if (module.provide) this.#installProvider(module, symbol);
@@ -102,21 +102,21 @@ export default class BaseBot implements Bot {
     }
 
     // @ts-expect-error: private function not supported yet but it works
-    async #removeProvider (symbol) {
+    async #removeProvider (symbol: Symbol) {
         this.#removeHookPlatform(symbol);
         this.platforms.delete(symbol);
         this.instances.delete(symbol);
     }
 
     // @ts-expect-error: private function not supported yet but it works
-    async #installPlugin (module: Module.Plugin, symbol) {
+    async #installPlugin (module: Module.Plugin, symbol: Symbol) {
         this.plugins.set(symbol, module);
         this.#hookPlugin(symbol);
         if (module.create) this.#installPluginMiddleware(symbol);
     }
 
     // @ts-expect-error: private function not supported yet but it works
-    async #removePlugin (symbol) {
+    async #removePlugin (symbol: Symbol) {
         const plugin = this.plugins.get(symbol);
         this.#removeHookPlugin(symbol);
         if (plugin.create) this.#removePluginMiddleware(symbol);
@@ -125,14 +125,14 @@ export default class BaseBot implements Bot {
     }
 
     // @ts-expect-error: private function not supported yet but it works
-    async #installFilter (module: Module.Filter, symbol) {
+    async #installFilter (module: Module.Filter, symbol: Symbol) {
         const instance = this.instances.get(symbol);
         if (!module.filter) return;
         this.filters.set(symbol, module.filter.bind(instance));
     }
 
     // @ts-expect-error: private function not supported yet but it works
-    async #removeFilter (symbol) {
+    async #removeFilter (symbol: Symbol) {
         this.filters.delete(symbol);
         this.instances.delete(symbol);
     }
@@ -177,7 +177,7 @@ export default class BaseBot implements Bot {
     }
 
     // @ts-expect-error: private function not supported yet but it works
-    #installPluginMiddleware (symbol) {
+    #installPluginMiddleware (symbol: Symbol) {
         const plugin = this.plugins.get(symbol);
         const instance = this.instances.get(symbol);
         const middleware = plugin.create.apply(instance);
