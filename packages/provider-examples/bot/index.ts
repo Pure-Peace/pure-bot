@@ -254,7 +254,7 @@ export default class BaseBot implements Bot {
      * *for test* create a Context.Context from provider event
      * @param event any
      * @param platform
-     * @returns {Context.Context}
+     * @returns {Promise<Context.Context>}
      */
     async createContext (event, platform: Module.Platform) {
         const message: Context.Message = {
