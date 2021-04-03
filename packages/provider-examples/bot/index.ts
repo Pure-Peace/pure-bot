@@ -144,6 +144,7 @@ export default class BaseBot implements Bot {
         const platform = this.platforms.get(symbol);
         const context = await this.createContext(messageEvent, platform);
         this.events.emit('message', context);
+        this.activeMiddlewareChain(context);
     }
 
     async createContext (event, platform) {

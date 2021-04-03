@@ -19,7 +19,7 @@ module.exports = {
         console.log('have access to plugin instance as this', this);
         return (ctx, next) => {
             console.log('plugin: processed message', ctx.message);
-            console.log(new Error('next function do not appear in the call stack').stack);
+            // console.log(new Error('next function do not appear in the call stack').stack);
             next();
             console.log('codes after next() is also executed and execute before next plugin');
             return next();
