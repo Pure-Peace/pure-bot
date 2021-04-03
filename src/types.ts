@@ -42,8 +42,6 @@ export namespace Context {
     };
   };
 
-  type PlatformType = 'onebot';
-
   type TypedMessageContext = Partial<Record<MessageType, RecivedMessage>>;
 
   type PlatformContext = Partial<Record<PlatformType, TypedMessageContext>>;
