@@ -63,8 +63,9 @@ export namespace Module {
     ctx: Context.Context,
     next: NextFunction
   ) => any;
-  export type HookHandler = (this: any, ctx: Context.Context) => void;
   export type Instance = any;
+  export type HookHandler = (this: Instance, ctx: Context.Context) => void;
+  export type FilterHandler = (this: Instance, ctx: Context.Context) => Promise<boolean>
   export interface Platform {
     source: EventEmitter;
     send: (target: any, message: Context.Message) => any;
@@ -92,11 +93,16 @@ export namespace Module {
   export interface Provider extends Interface {
     provide: (this: Instance) => Platform;
   }
+  export interface Filter extends Interface {
+    filter: FilterHandler
+  }
 }
 
 export interface Bot {
   use: (module: Module.Interface, options: any) => any,
-  on: (eventName: string, handle: Module.HookHandler) => any;
+  remove: (symbol: Symbol) => any,
+  reuse: (module: Module.Interface, instance: Module.Instance) => any,
+  // on: (eventName: string, handle: Module.HookHandler) => any;
 
   // not first problem: graceful restart & stop
   stop?: () => Promise<void>

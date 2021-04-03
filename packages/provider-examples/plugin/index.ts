@@ -4,7 +4,7 @@ const singleton: Record<any, any> = {
     count: 0
 };
 
-module.exports = {
+export default {
     name: 'pure-plugin-proposal',
     // return a instance
     instance (options) {

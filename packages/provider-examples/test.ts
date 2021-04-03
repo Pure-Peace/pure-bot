@@ -1,7 +1,7 @@
 import provider from './provider';
 import Bot from './bot';
-const plugin = require('./plugin');
-
+import filter from './filter';
+import plugin from './plugin';
 const bot = new Bot({});
 const bot2 = new Bot({});
 bot.use(provider, {});
@@ -25,3 +25,8 @@ setTimeout(async () => {
         console.log('bot[2] reuses provider instance created by bot[1]');
     }, 2000);
 }, 2000);
+setTimeout(async () => {
+    bot.use(filter, { users: [] });
+    bot2.use(filter, { users: [] });
+    console.log('filter installed to both of the bots');
+}, 6000);
