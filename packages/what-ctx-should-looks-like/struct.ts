@@ -1,47 +1,5 @@
 // @ts-nocheck
-type MessageSegment = {
-    id?: string, // message id
-    text?: string, // message in text
-    raw?: string // raw message
-    notify?: string, // @<userId> in onebot
-    quote?: string, // reply in onebot
-    file?: string, // send | recive image
-    image?: string, // send | recive image
-    audio?: string, // send | recive audio
-    json?: JSON // send | recive json data
-    adaptiveCard?: JSON
-}
-type Message = string | MessageSegment
 
-type RecivedMessage = MessageSegment & {
-    id: string | {
-        toString: () => string
-    },
-    text: string,
-    raw: string,
-    segments: [MessageSegment],
-    sender: {
-        name?: string,
-        id: string | {
-            toString: () => string
-        },
-    }
-}
-
-type PlatformType = 'onebot'
-type MessageType = 'privateMessage' | 'publicMessage' | 'channelMessage' | 'groupMessage' | 'message'
-
-type TypedMessageContext = Partial<Record<MessageType, RecivedMessage>>
-
-type PlatformContext = Partial<Record<PlatformType, TypedMessageContext>>
-
-type MessageContext = PlatformContext & {
-    platform: string,
-    message: RecivedMessage
-    quote: (msg: Message | [Message]) => Promise<void>,
-    send: (msg: Message | [Message]) => Promise<void>,
-    bots: [Bot: Object]
-}
 const text = 'suitable message type!';
 const MessageEvent = {
     platform: 'onebot',

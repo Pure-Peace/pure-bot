@@ -9,6 +9,8 @@ import { MessageContext, contextFactory } from './context';
 import { Duration, isAsyncFn } from '../utils';
 import { createChain } from '../../packages/chain-of-responsibility';
 
+import { Module } from '../types';
+
 const parse = require('fast-json-parse');
 const stringify = require('fast-json-stable-stringify');
 
@@ -18,18 +20,6 @@ export declare class MyWebSocket extends WebSocket {
     alive: boolean;
     sendJson: (data: any) => void;
 }
-
-namespace Plugin{
-    export type NextFunction = (arg: void | CallableFunction) => void;
-    export type ChainableHandler = (ctx: MessageContext, next: NextFunction) => any;
-    export type HookHandler = (this: any, ctx: MessageContext) => void;
-    export type Instance = any;
-    export interface Interface {
-        create: (this: Instance) => ChainableHandler
-        instance: (options: any) => Instance;
-        hooks: Record<string, HookHandler>
-    }
-};
 
 type handler = (ctx: MessageContext) => any;
 type afterHandler = (ctx: MessageContext, result: any) => any;
@@ -761,7 +751,7 @@ export class QQbot {
         return this.onMessage('group', handler, ...args);
     }
 
-    async initPlugin (plugin: Plugin.Interface, options: Partial<any> = {}) {
+    async initPlugin (plugin: Module.Plugin, options: Partial<any> = {}) {
         // init plugin
         const instance = await plugin.instance(options);
 
@@ -785,7 +775,7 @@ export class QQbot {
         };
     }
 
-    async use (plugin: Plugin.Interface) {
+    async use (plugin: Module.Plugin) {
         const pluginCtx = await this.initPlugin(plugin);
         // todo: uuid plugin
         this.plugins.set(Math.random(), pluginCtx);

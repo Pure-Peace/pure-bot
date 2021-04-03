@@ -1,4 +1,5 @@
-// @ts-nocheck
+import { Module } from '../../src/types';
+
 const singleton: Record<any, any> = {
     count: 0
 };
@@ -121,4 +122,4 @@ module.exports = {
             registeredUser: 'registered-users'
         }
     }
-};
+} as Module.Plugin;
