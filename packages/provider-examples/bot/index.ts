@@ -140,9 +140,9 @@ export default class BaseBot implements Bot {
         this.activeMiddlewareChain = createChain(Array.from(this.middlewares).map(([, messageHandler]) => messageHandler));
     }
 
-    handleMessage (messageEvent, symbol: Symbol) {
+    async handleMessage (messageEvent, symbol: Symbol) {
         const platform = this.platforms.get(symbol);
-        const context = this.createContext(messageEvent, platform);
+        const context = await this.createContext(messageEvent, platform);
         this.events.emit('message', context);
     }
 

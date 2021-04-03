@@ -18,7 +18,7 @@ module.exports = {
         console.log('have access to singleton variables', singleton);
         console.log('have access to plugin instance as this', this);
         return (ctx, next) => {
-            console.log('plugin: processed message', ctx.raw_message);
+            console.log('plugin: processed message', ctx.message);
             console.log(new Error('next function do not appear in the call stack').stack);
             next();
             console.log('codes after next() is also executed and execute before next plugin');
@@ -47,21 +47,21 @@ module.exports = {
         };
     },
     hooks: {
-        onMessage (ctx) {
+        message (ctx) {
             console.log('Unmanaged onMessage hook have access to instance as this', this);
-            console.debug('unmanaged onMessage hook recived message', ctx.raw_message);
+            console.debug('unmanaged onMessage hook recived message', ctx.message);
         },
-        onPrivateMessage (ctx) {
-            console.debug('unmanaged onPrivateMessage hook message', ctx.raw_message);
+        privateMessage (ctx) {
+            console.debug('unmanaged onPrivateMessage hook message', ctx.message);
         },
-        onPublicMessage (ctx) {
-            console.debug('unmanaged onPublicMessage hook recived message (includes channel message (irc, khl, discord) and group message (onebot))', ctx.raw_message);
+        publicMessage (ctx) {
+            console.debug('unmanaged onPublicMessage hook recived message (includes channel message (irc, khl, discord) and group message (onebot))', ctx.message);
         },
-        onChannelMessage (ctx) {
-            console.debug('unmanaged onChannelMessage hook recived message (irc, khl, discord)', ctx.raw_message);
+        channelMessage (ctx) {
+            console.debug('unmanaged onChannelMessage hook recived message (irc, khl, discord)', ctx.message);
         },
-        onGroupMessage (ctx) {
-            console.debug('unmanaged onGroupMessage hook recived message (irc, khl, discord)', ctx.raw_message);
+        groupMessage (ctx) {
+            console.debug('unmanaged onGroupMessage hook recived message (irc, khl, discord)', ctx.message);
         }
     },
     // database: no-cache
