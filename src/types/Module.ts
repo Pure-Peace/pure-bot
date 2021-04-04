@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { Context } from './Context';
 export namespace Module {
-  export type NextFunction = (arg: void | CallableFunction) => void;
+  export type NextFunction = (arg: void | NextFunction) => void;
   export type ChainableHandler = (
     ctx: Context.Context,
     next: NextFunction
