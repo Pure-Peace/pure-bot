@@ -30,3 +30,5 @@ setTimeout(async () => {
     bot2.use(filter, { users: [] });
     console.log('filter installed to both of the bots');
 }, 6000);
+
+export * from '../../src/types';
