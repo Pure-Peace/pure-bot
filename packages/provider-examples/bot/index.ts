@@ -1,268 +1,296 @@
 import { Bot, Module, Context } from '../../../src/types';
 import { createChain } from '../../chain-of-responsibility';
 import { EventEmitter } from 'events';
+type Hooks = Array<{
+  hookName: string;
+  handler: (...args) => void;
+}>;
 export default class BaseBot implements Bot {
-    instances: Map<Symbol, Module.Instance>
-    filters: Map<Symbol, Module.FilterHandler>
-    // providers: Map<Symbol, Module.Provider>
-    platforms: Map<Symbol, Module.Platform>
-    platformHooks: Map<Symbol, Array<{
-        hookName: string,
-        handler: (...args) => void;
-    }>>
+  instances: Map<Symbol, Module.Instance>;
+  filters: Map<Symbol, Module.FilterHandler>;
+  platformInterfaces: Map<Symbol, Module.PlatformInterface>;
+  platformFeatures: Map<Symbol, Module.Features>;
+  receivers: Map<Symbol, Module.Receiver>;
+  transmitters: Map<Symbol, Module.Transmitter>;
+  platformEventHooks: Map<Symbol, Hooks>;
+  plugins: Map<Symbol, Module.Plugin>;
+  pluginHooks: Map<Symbol, Hooks>;
+  middlewares: Map<Symbol, Module.ChainableHandler>;
 
-    plugins: Map<Symbol, Module.Plugin>
-    pluginHooks: Map<Symbol, Array<{
-        hookName: string,
-        handler: (...args) => void;
-    }>>
+  // createChain result
+  activeMiddlewareChain: Module.HookHandler;
+  options: any;
+  inboundEvents: EventEmitter;
+  filteredEvents: EventEmitter;
+  constructor (options) {
+      this.instances = new Map();
+      // this.transceivers = new Map();
+      this.platformInterfaces = new Map();
+      this.receivers = new Map();
+      this.transmitters = new Map();
+      this.platformFeatures = new Map();
+      this.platformEventHooks = new Map();
+      this.plugins = new Map();
+      this.pluginHooks = new Map();
+      this.filters = new Map();
+      this.options = options;
+      this.inboundEvents = new EventEmitter();
+      this.filteredEvents = new EventEmitter();
+      this.middlewares = new Map();
+      this.activeMiddlewareChain = () => {};
+  }
 
-    middlewares: Map<Symbol, Module.ChainableHandler>
+  /**
+   * install a module, could be a PlatformInterface, a Plugin or a filter.
+   * @param module
+   * @param options
+   * @returns {Symbol}
+   */
+  async use (
+      module: Module.PlatformInterface | Module.Plugin | Module.Filter,
+      options: any = {}
+  ) {
+      if (!module.instance) { throw new Error('module should have an instance method') }
 
-    // createChain result
-    activeMiddlewareChain: Module.HookHandler
-    options: any;
-    inboundEvents: EventEmitter;
-    filteredEvents: EventEmitter;
-    constructor (options) {
-        this.instances = new Map();
-        // this.providers = new Map();
-        this.platforms = new Map();
-        this.platformHooks = new Map();
-        this.plugins = new Map();
-        this.pluginHooks = new Map();
-        this.filters = new Map();
-        this.options = options;
-        this.inboundEvents = new EventEmitter();
-        this.filteredEvents = new EventEmitter();
-        this.middlewares = new Map();
-        this.activeMiddlewareChain = () => {};
-    }
+      const instance = await module.instance(options);
+      return this.#installInstance(module, instance);
+  }
 
-    /**
-     * install a module, could be a Provider, a Plugin or a filter.
-     * @param module
-     * @param options
-     * @returns {Symbol}
-     */
-    async use (module: Module.Provider | Module.Plugin | Module.Filter, options: any = {}) {
-        if (!module.instance) throw new Error('module should have an instance method');
+  /**
+   * re-install a module use gived Module instance
+   * @param module
+   * @param instance
+   * @returns {Symbol}
+   */
+  async reuse (
+      module: Module.PlatformInterface | Module.Plugin | Module.Filter,
+      instance: Module.Instance
+  ) {
+      if ([...this.instances.values()].includes(instance)) { throw new Error('instance is already in the bot') }
+      return this.#installInstance(module, instance);
+  }
 
-        const instance = await module.instance(options);
-        return this.#installInstance(module, instance);
-    }
+  /**
+   * real install method only callable from inside class
+   * @param module
+   * @param instance
+   * @returns {Symbol}
+   */
+  // @ts-expect-error: private function not supported yet but it works
+  async #installInstance (module, instance: Module.Instance) {
+      const symbol = Symbol(`instance[${module.name}]`);
+      this.instances.set(symbol, instance);
+      if (module.receiver) this.#installPlatformInterface(module, symbol);
+      else if (module.handle) this.#installPlugin(module, symbol);
+      else if (module.filter) this.#installFilter(module, symbol);
+      else throw new Error('unknown type of Module');
+      return symbol;
+  }
 
-    /**
-     * re-install a module use gived Module instance
-     * @param module
-     * @param instance
-     * @returns {Symbol}
-     */
-    async reuse (module: Module.Provider | Module.Plugin | Module.Filter, instance: Module.Instance) {
-        if ([...this.instances.values()].includes(instance)) throw new Error('instance is already in the bot');
-        return this.#installInstance(module, instance);
-    }
+  /**
+   * remove module from processing chain and return the instance of the module, can be re-installed using `Bot.reuse(module, instance)`;
+   * @param symbol
+   * @returns {Module.Instance}
+   */
+  async remove (symbol: Symbol) {
+      const instance = this.instances.get(symbol);
+      if (!instance) throw new Error('instance not exists');
 
-    /**
-     * real install method only callable from inside class
-     * @param module
-     * @param instance
-     * @returns {Symbol}
-     */
-    // @ts-expect-error: private function not supported yet but it works
-    async #installInstance (module, instance: Module.Instance) {
-        const symbol = Symbol(`instance[${module.name}]`);
-        this.instances.set(symbol, instance);
-        if (module.provide) this.#installProvider(module, symbol);
-        if (module.create) this.#installPlugin(module, symbol);
-        if (module.filter) this.#installFilter(module, symbol);
-        return symbol;
-    }
+      if (this.platformInterfaces.get(symbol)) { this.#removePlatformInterface(symbol) }
+      if (this.plugins.get(symbol)) this.#removePlugin(symbol);
+      if (this.filters.get(symbol)) this.#removeFilter(symbol);
 
-    /**
-     * remove module from processing chain and return the instance of the module, can be re-installed using `Bot.reuse(module, instance)`;
-     * @param symbol
-     * @returns {Module.Instance}
-     */
-    async remove (symbol: Symbol) {
-        const instance = this.instances.get(symbol);
-        if (!instance) return;
+      return instance;
+  }
 
-        if (this.platforms.get(symbol)) this.#removeProvider(symbol);
-        if (this.plugins.get(symbol)) this.#removePlugin(symbol);
-        if (this.filters.get(symbol)) this.#removeFilter(symbol);
+  // @ts-expect-error: private function not supported yet but it works
+  async #installPlatformInterface (module: Module.PlatformInterface, symbol) {
+      this.platformInterfaces.set(symbol, module);
+      const instance = this.instances.get(symbol);
 
-        return instance;
-    }
+      const receiver = await module.receiver.apply(instance);
+      const transmitter = await module.transmitter.apply(instance);
+      this.receivers.set(symbol, receiver);
+      this.transmitters.set(symbol, transmitter);
 
-    // @ts-expect-error: private function not supported yet but it works
-    async #installProvider (module: Module.Provider, symbol) {
-        const instance = this.instances.get(symbol);
-        const platform = await module.provide.apply(instance);
-        this.platforms.set(symbol, platform);
-        this.#hookPlatform(symbol);
-    }
+      this.#listenPlatformEvents(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    async #removeProvider (symbol: Symbol) {
-        this.#removeHookPlatform(symbol);
-        this.platforms.delete(symbol);
-        this.instances.delete(symbol);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  async #removePlatformInterface (symbol: Symbol) {
+      this.#removePlatformEventsListeners(symbol);
+      this.receivers.delete(symbol);
+      this.transmitters.delete(symbol);
+      this.platformInterfaces.delete(symbol);
+      this.instances.delete(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    async #installPlugin (module: Module.Plugin, symbol: Symbol) {
-        this.plugins.set(symbol, module);
-        this.#hookPlugin(symbol);
-        if (module.create) this.#installPluginMiddleware(symbol);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  async #installPlugin (module: Module.Plugin, symbol: Symbol) {
+      this.plugins.set(symbol, module);
+      this.#hookPlugin(symbol);
+      if (module.handle) this.#installPluginMiddleware(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    async #removePlugin (symbol: Symbol) {
-        const plugin = this.plugins.get(symbol);
-        this.#removeHookPlugin(symbol);
-        if (plugin.create) this.#removePluginMiddleware(symbol);
-        this.plugins.delete(symbol);
-        this.instances.delete(symbol);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  async #removePlugin (symbol: Symbol) {
+      const plugin = this.plugins.get(symbol);
+      this.#removeHookPlugin(symbol);
+      if (plugin.handle) this.#removePluginMiddleware(symbol);
+      this.plugins.delete(symbol);
+      this.instances.delete(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    async #installFilter (module: Module.Filter, symbol: Symbol) {
-        const instance = this.instances.get(symbol);
-        if (!module.filter) return;
-        this.filters.set(symbol, module.filter.bind(instance));
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  async #installFilter (module: Module.Filter, symbol: Symbol) {
+      const instance = this.instances.get(symbol);
+      if (!module.filter) return;
+      this.filters.set(symbol, module.filter.bind(instance));
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    async #removeFilter (symbol: Symbol) {
-        this.filters.delete(symbol);
-        this.instances.delete(symbol);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  async #removeFilter (symbol: Symbol) {
+      this.filters.delete(symbol);
+      this.instances.delete(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #hookPlatform (symbol: Symbol) {
-        const platform = this.platforms.get(symbol);
-        // create more handlers later
-        const handler = (data) => this.inboundMessage(data, symbol);
-        const handlers = [{ hookName: 'message', handler }];
-        this.platformHooks.set(symbol, handlers);
-        handlers.forEach(({ hookName, handler }) => platform.source.on(hookName, handler));
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #listenPlatformEvents (symbol: Symbol) {
+      const receiver = this.receivers.get(symbol);
+      // handle more handlers later
+      const handler = (data) => this.inboundMessage(data, symbol);
+      const handlers = [{ hookName: 'event', handler }];
+      this.platformEventHooks.set(symbol, handlers);
+      handlers.forEach(({ hookName, handler }) =>
+          receiver.source.on(hookName, handler)
+      );
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #removeHookPlatform (symbol: Symbol) {
-        const platform = this.platforms.get(symbol);
-        this.platformHooks.get(symbol)
-            .map(({ hookName, handler }) => platform.source.off(hookName, handler));
-        this.platformHooks.delete(symbol);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #removePlatformEventsListeners (symbol: Symbol) {
+      const receiver = this.receivers.get(symbol);
+      this.platformEventHooks
+          .get(symbol)
+          .map(({ hookName, handler }) => receiver.source.off(hookName, handler));
+      this.platformEventHooks.delete(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #hookPlugin (symbol: Symbol) {
-        const plugin = this.plugins.get(symbol);
-        const instance = this.instances.get(symbol);
-        const hooks = Object.entries(plugin.hooks || {}).map(([hookName, handler]) => {
-            return { hookName: hookName, handler: handler.bind(instance) };
-        });
-        this.pluginHooks.set(symbol, hooks);
-        hooks.forEach(({ hookName, handler }) => {
-            this.filteredEvents.on(hookName, handler);
-        });
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #hookPlugin (symbol: Symbol) {
+      const plugin = this.plugins.get(symbol);
+      const instance = this.instances.get(symbol);
+      const hooks = Object.entries(plugin.hooks || {}).map(
+          ([hookName, handler]) => {
+              return { hookName: hookName, handler: handler.bind(instance) };
+          }
+      );
+      this.pluginHooks.set(symbol, hooks);
+      hooks.forEach(({ hookName, handler }) => {
+          this.filteredEvents.on(hookName, handler);
+      });
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #removeHookPlugin (symbol: Symbol) {
-        this.pluginHooks.get(symbol).forEach(({ hookName, handler }) => {
-            this.filteredEvents.off(hookName, handler);
-        });
-        this.pluginHooks.delete(symbol);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #removeHookPlugin (symbol: Symbol) {
+      this.pluginHooks.get(symbol).forEach(({ hookName, handler }) => {
+          this.filteredEvents.off(hookName, handler);
+      });
+      this.pluginHooks.delete(symbol);
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #installPluginMiddleware (symbol: Symbol) {
-        const plugin = this.plugins.get(symbol);
-        const instance = this.instances.get(symbol);
-        const middleware = plugin.create.apply(instance);
-        this.middlewares.set(symbol, middleware);
-        this.#updateMiddlewareChain();
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #installPluginMiddleware (symbol: Symbol) {
+      const plugin = this.plugins.get(symbol);
+      const instance = this.instances.get(symbol);
+      const middleware = plugin.handle.apply(instance);
+      this.middlewares.set(symbol, middleware);
+      this.#updateMiddlewareChain();
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #removePluginMiddleware (symbol: Symbol) {
-        this.middlewares.delete(symbol);
-        this.#updateMiddlewareChain();
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #removePluginMiddleware (symbol: Symbol) {
+      this.middlewares.delete(symbol);
+      this.#updateMiddlewareChain();
+  }
 
-    // @ts-expect-error: private function not supported yet but it works
-    #updateMiddlewareChain () {
-        this.activeMiddlewareChain = createChain([...this.middlewares.values()]);
-    }
+  // @ts-expect-error: private function not supported yet but it works
+  #updateMiddlewareChain () {
+      this.activeMiddlewareChain = createChain([...this.middlewares.values()]);
+  }
 
-    /**
-     * filtering out message
-     * true for message passed the filter
-     * @param context
-     * @returns {Promise<boolean>}
-     */
-    async filter (context: Context.Context) {
-        for (const [, filter] of this.filters.entries()) {
-            if (!await filter(context)) return false;
-            else continue;
-        }
-        return true;
-    }
+  /**
+   * filtering out message
+   * true for message passed the filter
+   * @returns {Promise<boolean>}
+   */
+  async filter (context: Context.Context) {
+      for (const [, filter] of this.filters.entries()) {
+          if (!(await filter(context))) return false;
+          else continue;
+      }
+      return true;
+  }
 
-    /**
-     * create context based on messageEvent (interface not defined yet)
-     * @param messageEvent for now it's { rawMessage: string, scope: 'private' | 'public'..., sender: Context.Sender }
-     * @param symbol platform symbol
-     */
-    async inboundMessage (messageEvent, symbol: Symbol) {
-        const platform = this.platforms.get(symbol);
-        const context = await this.createContext(messageEvent, platform);
-        this.handleInboundMessage(context);
-    }
+  /**
+   * handle context based on messageEvent (interface not defined yet)
+   * @param messageEvent for now it's { rawMessage: string, scope: 'private' | 'public'..., sender: Context.Sender }
+   * @param symbol platform symbol
+   */
+  async inboundMessage (messageEvent, symbol: Symbol) {
+      // const platform = this.platformInterfaces.get(symbol);
+      const context = await this.handleContext(messageEvent, symbol);
+      this.handleInboundEvent(context);
+  }
 
-    /**
-     * handle inbound message
-     * emit any message to inboundEvents,
-     * filtering out messages use installed filters,
-     * emit filtered message to filteredEvents,
-     * calls handleFilteredMessage method
-     * @param context
-     * @returns {void}
-     */
-    async handleInboundMessage (context: Context.Context) {
-        // all messages: usable to extract events for chaining events
-        this.inboundEvents.emit('message', context);
-        if (!await this.filter(context)) return;
-        // filtered message: handle in this bot
-        this.filteredEvents.emit('message', context);
-        this.handleFilteredMessage(context);
-    }
+  /**
+   * handle inbound message
+   * emit any message to inboundEvents,
+   * filtering out messages use installed filters,
+   * emit filtered message to filteredEvents,
+   * calls handleFilteredvent method
+   * @returns {void}
+   */
+  async handleInboundEvent (context: Context.Context) {
+      // all messages: usable to extract events for chaining events
+      this.inboundEvents.emit('event', context);
+      if (!(await this.filter(context))) return;
+      // filtered message: handle in this bot
+      this.filteredEvents.emit('event', context);
+      this.handleFilteredvent(context);
+  }
 
-    /**
-     * handle filtered message.
-     * Chained Plugin handler will be invoked here
-     * @param context
-     */
-    async handleFilteredMessage (context: Context.Context) {
-        this.activeMiddlewareChain(context);
-    }
+  /**
+   * handle filtered message.
+   * Chained Plugin handler will be invoked here
+   */
+  async handleFilteredvent (context: Context.Context) {
+      this.activeMiddlewareChain(context);
+  }
 
-    /**
-     * *for test* create a Context.Context from provider event
-     * @param event any
-     * @param platform
-     * @returns {Promise<Context.Context>}
-     */
-    async createContext (event, platform: Module.Platform) {
-        const message: Context.Message = {
-            text: event.rawMessage
-        };
-        return {
-            message,
-            send: platform.send.bind(platform)
-        } as Context.Context;
-    }
+  /**
+   * *for test* handle a Context.Context from transceiver event
+   * @returns {Promise<Context.Context>}
+   */
+  async handleContext (event, symbol: Symbol) {
+      const transmitter = this.transmitters.get(symbol);
+      const platformFeatures = this.platformFeatures.get(symbol);
+      const platformInterfaces = this.platformInterfaces.get(symbol);
+      const platformName = platformInterfaces.platform;
+      return {
+          transmitter,
+          features: platformFeatures,
+          ...transmitter,
+          ...platformFeatures,
+          [event.type]: event[event.type],
+          [event.scope]: {
+              [event.type]: event[event.type]
+          },
+          [platformName]: {
+              [event.type]: event[event.type],
+              [event.scope]: {
+                  [event.type]: event[event.type]
+              }
+          }
+      } as Context.Context;
+  }
 }

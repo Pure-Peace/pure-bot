@@ -14,7 +14,7 @@ module.exports = {
     },
     create () {
         return (ctx, next) => {
-            const m = ctx.irc?.osu?.message;
+            const m = ctx.osu?.message;
             if (!m) return next();
 
             if (m.text?.startsWith('!help')) {

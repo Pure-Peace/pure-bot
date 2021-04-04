@@ -15,7 +15,7 @@ export default {
             instanceVariable: 0
         };
     },
-    create () {
+    handle () {
         return (ctx, next) => {
             console.log(`plugin[${this.count}]`, 'plugin recived message', ctx.message);
         };

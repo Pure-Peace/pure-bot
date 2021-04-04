@@ -1,11 +1,11 @@
-import provider from './provider';
+import platform from './transceiver';
 import Bot from './bot';
 import filter from './filter';
 import plugin from './plugin';
 const bot = new Bot({});
 const bot2 = new Bot({});
-bot.use(provider, {});
-const bot2Provider = bot2.use(provider, {});
+bot.use(platform, {});
+const bot2Provider = bot2.use(platform, {});
 const installedPlugin = bot.use(plugin, {});
 bot2.use(plugin, {});
 
@@ -18,11 +18,11 @@ setTimeout(async () => {
     }, 2000);
 }, 2000);
 setTimeout(async () => {
-    const providerInstance = await bot2.remove(await bot2Provider);
-    console.log('removed provider from bot[2]');
+    const platformInstance = await bot2.remove(await bot2Provider);
+    console.log('removed platform from bot[2]');
     setTimeout(() => {
-        bot2.reuse(provider, providerInstance);
-        console.log('bot[2] reuses provider instance created by bot[1]');
+        bot2.reuse(platform, platformInstance);
+        console.log('bot[2] reuses platform instance created by bot[1]');
     }, 2000);
 }, 2000);
 setTimeout(async () => {

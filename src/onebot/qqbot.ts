@@ -768,7 +768,7 @@ export class QQbot {
         // todo: database
 
         // chainable function
-        const messageHandler = plugin.create.apply(instance);
+        const messageHandler = plugin.handle.apply(instance);
         return {
             instance,
             messageHandler
