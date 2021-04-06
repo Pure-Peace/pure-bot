@@ -57,8 +57,7 @@
     "ws": "^7.4.4"
   },
   "workspaces": [
-    "packages/adapter-koishi-plugin",
     "packages/chain-of-responsibility",
-    "packages/pure-plugin-proposal"
+    "packages/platforms/irc"
   ]
 }

@@ -2,19 +2,19 @@ import { Scope, PlatformType } from './Event';
 import { Module } from './Module';
 export namespace Context {
   export type File = {
-    name?: string,
-    size?: number,
-    url?: string,
-    path?: string,
-    blob?: Blob,
-    buffer?: Buffer
-  }
+    name?: string;
+    size?: number;
+    url?: string;
+    path?: string;
+    blob?: Blob;
+    buffer?: Buffer;
+  };
   type MessageSegment = {
-    id?: string; // message id
     text?: string; // message in text
     raw?: string; // raw message
     notify?: string; // @<userId> in onebot
     quote?: string; // reply in onebot
+    CQCode?: string;
     file?: File; // send | recive image
     image?: File; // send | recive image
     audio?: File; // send | recive audio
@@ -30,44 +30,46 @@ export namespace Context {
           toString: () => string;
         };
   };
+  export type Channel = Sender;
+  export type Group = Sender;
 
   export interface InboundEvent {
     message: MessageSegment & {
-      id:
-        | string
-        | {
-            toString: () => string;
-          };
       text: string;
       raw: string;
-      segments: [MessageSegment];
+      segments: MessageSegment[];
       sender: Sender;
+      channel?: Channel;
+      group?: Group;
     };
-  };
-
-  export type ScopedEvents = Partial<InboundEvent>;
-
-  // export interface ScopedContext extends Context, InboundEvent {}
-  export type ScopedContext = Partial<Record<Scope, InboundEvent>>
-  // type ScopedContext = Partial<> & Context;
-
-  export type PlatformContext = Partial<Record<PlatformType, ScopedContext>>;
-
-  export type MessageContext = Partial<PlatformContext> & {
-    message: InboundEvent['message']
   }
 
+  export type ScopedEvents = Partial<InboundEvent>;
+  export type ScopedContext = Partial<Record<Scope, InboundEvent>>;
+  export type PlatformContext = Partial<Record<PlatformType, ScopedContext>>;
+  export type MessageContext = Partial<PlatformContext> & {
+    message: InboundEvent['message'];
+  };
+
   export interface Context extends MessageContext {
-    rawEvent: Module.Event,
-    getPlatform?: (platformType: string) => [{
-      instance: Module.Instance,
-      transmitter: Module.Transmitter,
-      receiver: Module.Receiver,
-      features: Module.Features
-    }]
-    quote: (msg: Message | [Message]) => Promise<void>;
-    send: (msg: Message | [Message]) => Promise<void>;
+    id: any,
+    rawEvent: Module.Event;
+    getPlatform?: (
+      platformType: string
+    ) => [
+      {
+        instance: Module.Instance;
+        transmitter: Module.Transmitter;
+        receiver: Module.Receiver;
+        features: Module.Features;
+      }
+    ];
+    quote: (msg: Message | Message[]) => Promise<void>;
+    send: (msg: Message | Message[]) => Promise<void>;
+    notify: (msg: Message | Message[]) => Promise<void>
     sender: Sender;
+    channel?: Channel;
+    group?: Group;
     transmitter?: Module.Transmitter;
     features?: Module.Features;
     database?: {
@@ -75,5 +77,5 @@ export namespace Context {
       channel: any;
       bot: any;
     };
-  };
+  }
 }

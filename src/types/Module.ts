@@ -14,7 +14,7 @@ export namespace Module {
   ) => Promise<boolean>;
   export interface BaseModule {
     name: string;
-    instance: (options: any) => Instance;
+    instance: (options: any) => Instance | Promise<Instance>;
 
     database?: Partial<{
       fields: Record<string, any>;
@@ -39,14 +39,14 @@ export namespace Module {
   export interface Transmitter {
     send: (
       target: Context.Sender,
-      message: Context.Message | [Context.Message]
+      message: Context.Message | Context.Message[]
     ) => Promise<any>;
   }
-  export type Features = Record<string, (this: Instance, ...args) => Promise<any>>
+  export type Features = Record<string, (this: Instance, ctx: Context.Context, ...args) => Promise<any>>
   export interface Platform extends BaseModule {
     platform: string,
-    receiver: (this: Instance) => Receiver;
-    transmitter: (this: Instance) => Transmitter;
+    receiver: (this: Instance) => Receiver | Promise<Receiver>;
+    transmitter: (this: Instance) => Transmitter | Promise<Transmitter>;
     features: Features;
   }
 
@@ -55,8 +55,12 @@ export namespace Module {
   }
 
   export interface Event {
+    id: any,
     scope: string,
     type: string,
-    platform?: string
+    platform?: string,
+    sender: Context.Sender,
+    channel?: Context.Channel,
+    group?: Context.Group
   }
 }

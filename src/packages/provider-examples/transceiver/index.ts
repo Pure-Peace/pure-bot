@@ -1,4 +1,4 @@
-import { Module } from '../../../src/types';
+import { Module } from 'types';
 import { EventEmitter } from 'events';
 const transformMessage = (message: string) => {
     return [{
@@ -18,6 +18,7 @@ export default {
         setInterval(() => {
             const message = 'hi' + Math.random();
             this.myConnection.emit('event', {
+                id: Math.random(),
                 scope: 'private',
                 type: 'message',
                 rawMessage: message,
@@ -36,5 +37,6 @@ export default {
         return {
             send: (target, message) => console.log('sending message', message, 'to', target)
         };
-    }
+    },
+    features: {}
 } as Module.Platform;

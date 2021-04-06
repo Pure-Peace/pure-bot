@@ -1,5 +1,5 @@
 'use strict';
-const { onebot: { QQbot }, utils } = require('../../dist');
+const { onebot: { QQbot }, utils } = require('../../../dist');
 
 utils.showBanner();
 
@@ -25,11 +25,11 @@ const fakeMessage = (msg) => ({
 });
 
 (async () => {
-    await bot.use(require('../../dist/packages/pure-plugin-proposal'));
-    await bot.use(require('../../dist/packages/pure-plugin-proposal'));
-    await bot.use(require('../../dist/packages/pure-plugin-proposal'));
-    await bot.use(require('../../dist/packages/pure-plugin-proposal'));
-    await bot.use(require('../../dist/packages/pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
+    await bot.use(require('pure-plugin-proposal'));
     await bot.start();
 
     bot.fakeMessage(fakeMessage('hi'));

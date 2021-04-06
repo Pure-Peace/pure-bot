@@ -1,4 +1,4 @@
-import { Module } from '../../../src/types';
+import { Module } from 'types';
 export default {
     name: 'pure-filter-user-id-whitelist',
     instance (options) {

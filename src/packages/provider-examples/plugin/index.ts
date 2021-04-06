@@ -1,4 +1,4 @@
-import { Module } from '../../../src/types';
+import { Module } from 'types';
 
 const singleton: Record<any, any> = {
     count: 0

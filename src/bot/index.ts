@@ -1,5 +1,5 @@
-import { Bot, Module, Context } from '../../../src/types';
-import { createChain } from '../../chain-of-responsibility';
+import { Bot, Module, Context } from '../types';
+import { createChain } from '../packages/chain-of-responsibility';
 import { EventEmitter } from 'events';
 type Hooks = Array<{
   hookName: string;
@@ -288,7 +288,6 @@ export default class BaseBot implements Bot {
           rawEvent: event,
           transmitter,
           features: platformFeatures,
-          ...transmitter,
           ...platformFeatures,
           [event.type]: event[event.type],
           [event.scope || 'default']: {
@@ -299,7 +298,8 @@ export default class BaseBot implements Bot {
               [event.scope || 'default']: {
                   [event.type]: event[event.type]
               }
-          }
+          },
+          send: (message) => transmitter.send(event.sender, message)
       } as Context.Context;
   }
 }

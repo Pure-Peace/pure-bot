@@ -1,7 +1,7 @@
-import platform from './transceiver';
-import Bot from './bot';
-import filter from './filter';
-import plugin from './plugin';
+import platform from '../../packages/provider-examples/transceiver';
+import Bot from '../../bot';
+import filter from '../../packages/provider-examples/filter';
+import plugin from '../../packages/provider-examples/plugin';
 const bot = new Bot({});
 const bot2 = new Bot({});
 bot.use(platform, {});
@@ -31,4 +31,4 @@ setTimeout(async () => {
     console.log('filter installed to both of the bots');
 }, 6000);
 
-export * from '../../src/types';
+export * from 'types';
