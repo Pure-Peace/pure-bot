@@ -288,22 +288,33 @@ export default class BaseBot implements Bot {
       const platformFeatures = this.platformFeatures.get(symbol);
       const platform = this.platforms.get(symbol);
       const platformName = platform.platform;
+      const source = {
+          sender: event.source.sender,
+          channel: event.source.channel,
+          group: event.source.group
+      };
+      const copiedEvent = {
+          ...event,
+          source
+      };
       return {
-          rawEvent: event,
+          rawEvent: copiedEvent,
           transmitter,
           features: platformFeatures,
           ...platformFeatures,
+          source,
           [event.type]: event[event.type],
           [event.scope || 'default']: {
-              [event.type]: event[event.type]
+              [event.type]: copiedEvent[event.type]
           },
           [platformName]: {
-              [event.type]: event[event.type],
+              [event.type]: copiedEvent[event.type],
               [event.scope || 'default']: {
-                  [event.type]: event[event.type]
-              }
+                  [event.type]: copiedEvent[event.type]
+              },
+              source
           },
-          send: (message) => transmitter.send(event.channel || event.sender, message)
+          send: (message) => transmitter.send(event.source.channel || event.source.sender, message)
       } as Context.Context;
   }
 }

@@ -72,13 +72,15 @@ export default {
                         text
                     }]
                 } as Context.Message,
-                sender: {
-                    id: nick,
-                    name: nick
-                },
-                channel: to.startsWith('#') && {
-                    id: to,
-                    name: to
+                source: {
+                    sender: {
+                        id: nick,
+                        name: nick
+                    },
+                    channel: to.startsWith('#') && {
+                        id: to,
+                        name: to
+                    }
                 }
             } as Module.Event;
             this.event.emit('event', data);

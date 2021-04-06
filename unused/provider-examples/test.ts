@@ -1,7 +1,7 @@
-import platform from '../../packages/provider-examples/transceiver';
-import Bot from '../../packages/bot';
-import filter from '../../packages/provider-examples/filter';
-import plugin from '../../packages/provider-examples/plugin';
+import platform from './transceiver';
+import Bot from '../../src/packages/bot';
+import filter from './filter';
+import plugin from './plugin';
 const bot = new Bot({});
 const bot2 = new Bot({});
 bot.use(platform, {});

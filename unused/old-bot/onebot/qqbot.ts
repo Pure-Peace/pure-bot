@@ -7,9 +7,9 @@ import * as dayjs from 'dayjs';
 
 import { MessageContext, contextFactory } from './context';
 import { Duration, isAsyncFn } from '../utils';
-import { createChain } from '../packages/utils/chain-of-responsibility';
+import { createChain } from '../../../src/packages/utils/chain-of-responsibility';
 
-import { Module } from '../types';
+import { Module } from '../../../src/types';
 
 const parse = require('fast-json-parse');
 const stringify = require('fast-json-stable-stringify');

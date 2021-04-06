@@ -72,9 +72,11 @@ export default {
                 type: 'message',
                 rawMessage: message,
                 message: transformMessage(message),
-                sender: {
-                    id: '133466799',
-                    name: 'arily'
+                source: {
+                    sender: {
+                        id: '133466799',
+                        name: 'arily'
+                    }
                 }
             } as Module.Event);
         }, 1000);

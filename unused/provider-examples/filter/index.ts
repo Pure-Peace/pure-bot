@@ -7,6 +7,6 @@ export default {
         };
     },
     filter (context) {
-        return this.users.length && this.users.includes(context.sender?.id);
+        return this.users.length && this.users.includes(context.source?.sender?.id);
     }
 } as Module.Filter;

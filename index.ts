@@ -1,9 +1,9 @@
 'use strict';
-import { BotManager } from './src/manager';
-import * as utils from './src/utils';
-import * as onebot from './src/onebot';
-import * as discord from './src/discord';
-import * as kaiheila from './src/kaiheila';
+import { BotManager } from './unused/manager';
+import * as utils from './unused/old-bot/utils';
+import * as onebot from './unused/old-bot/onebot';
+import * as discord from './unused/old-bot/discord';
+import * as kaiheila from './unused/old-bot/kaiheila';
 
 export {
     BotManager,

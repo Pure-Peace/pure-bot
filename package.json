@@ -57,7 +57,7 @@
     "ws": "^7.4.4"
   },
   "workspaces": [
-    "src/packages/chain-of-responsibility",
+    "src/packages/utils/chain-of-responsibility",
     "src/packages/platforms/irc"
   ]
 }

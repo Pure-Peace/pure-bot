@@ -12,8 +12,10 @@ export namespace Module {
   export type FilterHandler = (
     this: Instance,
     ctx: Context.Context
-  ) => Promise<boolean>;
-  export type InitInstanceFunction = (options: any) => Instance | Promise<Instance>
+  ) => boolean | Promise<boolean>;
+  export type InitInstanceFunction = (
+    options: any
+  ) => Instance | Promise<Instance>;
   export interface BaseModule {
     name?: string;
     instance: InitInstanceFunction;
@@ -31,7 +33,10 @@ export namespace Module {
     resume?: (snapshot: JSON, options) => Instance;
   }
   export interface Plugin extends BaseModule {
-    handle?: (this: Instance, bot: Bot) => ChainableHandler | ChainableHandler[];
+    handle?: (
+      this: Instance,
+      bot: Bot
+    ) => ChainableHandler | ChainableHandler[];
     hooks?: Record<string, HookHandler>;
   }
 
@@ -44,11 +49,17 @@ export namespace Module {
       message: Context.Message | Context.Message[]
     ) => any | Promise<any>;
   }
-  export type Features = Record<string, (this: Instance, ctx: Context.Context, ...args) => Promise<any>>
+  export type Features = Record<
+    string,
+    (this: Instance, ctx: Context.Context, ...args) => any | Promise<any>
+  >;
   export interface Platform extends BaseModule {
-    platform: string,
+    platform: string;
     receiver: (this: Instance, bot: Bot) => Receiver | Promise<Receiver>;
-    transmitter: (this: Instance, bot: Bot) => Transmitter | Promise<Transmitter>;
+    transmitter: (
+      this: Instance,
+      bot: Bot
+    ) => Transmitter | Promise<Transmitter>;
     features: Features;
   }
 
@@ -57,12 +68,14 @@ export namespace Module {
   }
 
   export interface Event {
-    id: any,
-    scope: string,
-    type: string,
-    platform?: string,
-    sender: Context.Sender,
-    channel?: Context.Channel,
-    group?: Context.Group
+    id: any;
+    scope: string;
+    type: string;
+    platform?: string;
+    source: {
+      sender: Context.Sender;
+      channel?: Context.Channel;
+      group?: Context.Group;
+    };
   }
 }

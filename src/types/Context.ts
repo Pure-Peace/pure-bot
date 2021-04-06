@@ -12,10 +12,10 @@ export namespace Context {
   export type Sender = {
     name?: string;
     id:
-      | string
-      | {
-          toString: () => string;
-        };
+    | string
+    | {
+      toString: () => string;
+    };
   };
   export type Channel = Sender;
   export type Group = Sender;
@@ -57,19 +57,21 @@ export namespace Context {
     getPlatform?: (
       platformType: string
     ) => [
-      {
-        instance: Module.Instance;
-        transmitter: Module.Transmitter;
-        receiver: Module.Receiver;
-        features: Module.Features;
-      }
-    ];
+        {
+          instance: Module.Instance;
+          transmitter: Module.Transmitter;
+          receiver: Module.Receiver;
+          features: Module.Features;
+        }
+      ];
     quote: (msg: Message | Message[]) => Promise<void>;
     send: (msg: Message | Message[]) => Promise<void>;
     notify: (msg: Message | Message[]) => Promise<void>
-    sender: Sender;
-    channel?: Channel;
-    group?: Group;
+    source: {
+      sender: Sender;
+      channel?: Channel;
+      group?: Group;
+    }
     transmitter?: Module.Transmitter;
     features?: Module.Features;
     database?: {
