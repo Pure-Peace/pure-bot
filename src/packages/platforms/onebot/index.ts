@@ -86,5 +86,6 @@ export default {
         return {
             send: (target, message) => console.log('sending message', message, 'to', target)
         };
-    }
+    },
+    features: {}
 } as Module.Platform;

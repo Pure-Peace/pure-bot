@@ -1,5 +1,5 @@
 import platform from '../../packages/provider-examples/transceiver';
-import Bot from '../../bot';
+import Bot from '../../packages/bot';
 import filter from '../../packages/provider-examples/filter';
 import plugin from '../../packages/provider-examples/plugin';
 const bot = new Bot({});
@@ -30,5 +30,3 @@ setTimeout(async () => {
     bot2.use(filter, { users: [] });
     console.log('filter installed to both of the bots');
 }, 6000);
-
-export * from 'types';

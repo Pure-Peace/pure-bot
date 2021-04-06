@@ -9,19 +9,6 @@ export namespace Context {
     blob?: Blob;
     buffer?: Buffer;
   };
-  type MessageSegment = {
-    text?: string; // message in text
-    raw?: string; // raw message
-    notify?: string; // @<userId> in onebot
-    quote?: string; // reply in onebot
-    CQCode?: string;
-    file?: File; // send | recive image
-    image?: File; // send | recive image
-    audio?: File; // send | recive audio
-    json?: Object; // send | recive json data
-    adaptiveCard?: Object;
-  };
-  export type Message = string | MessageSegment;
   export type Sender = {
     name?: string;
     id:
@@ -32,6 +19,19 @@ export namespace Context {
   };
   export type Channel = Sender;
   export type Group = Sender;
+  type MessageSegment = {
+    text?: string; // message in text
+    raw?: string; // raw message
+    notify?: Sender | Channel | Group; // @<userId> in onebot
+    quote?: any; // reply in onebot
+    CQCode?: string;
+    file?: File; // send | recive image
+    image?: File; // send | recive image
+    audio?: File; // send | recive audio
+    json?: Object; // send | recive json data
+    adaptiveCard?: Object;
+  };
+  export type Message = string | MessageSegment;
 
   export interface InboundEvent {
     message: MessageSegment & {

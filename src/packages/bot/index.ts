@@ -1,5 +1,5 @@
-import { Bot, Module, Context } from '../types';
-import { createChain } from '../packages/chain-of-responsibility';
+import { Bot, Module, Context } from '../../types';
+import { createChain } from '../utils/chain-of-responsibility';
 import { EventEmitter } from 'events';
 type Hooks = Array<{
   hookName: string;
@@ -215,7 +215,11 @@ export default class BaseBot implements Bot {
 
   // @ts-expect-error: private function not supported yet but it works
   #updateMiddlewareChain () {
-      this.activeMiddlewareChain = createChain([...this.middlewares.values()]);
+      const chain = [...this.middlewares.values()].reduce((acc, m) => {
+          Array.isArray(m) ? acc.push(...m) : acc.push(m);
+          return acc;
+      }, []);
+      this.activeMiddlewareChain = createChain(chain);
   }
 
   /**
@@ -299,7 +303,7 @@ export default class BaseBot implements Bot {
                   [event.type]: event[event.type]
               }
           },
-          send: (message) => transmitter.send(event.sender, message)
+          send: (message) => transmitter.send(event.channel || event.sender, message)
       } as Context.Context;
   }
 }

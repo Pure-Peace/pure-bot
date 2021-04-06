@@ -13,7 +13,7 @@ nodemon({
         'node_modules/**/node_modules'
     ],
     verbose: false,
-    exec: `tsc --build && node ./dist/examples/${target} ${args}`,
+    exec: `tsc --build && node ./dist/src/examples/${target} ${args}`,
     watch: [
         '.'
     ],

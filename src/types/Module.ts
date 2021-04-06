@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { Bot } from './Bot';
 import { Context } from './Context';
 export namespace Module {
   export type NextFunction = (arg: void | NextFunction) => void;
@@ -13,7 +14,7 @@ export namespace Module {
     ctx: Context.Context
   ) => Promise<boolean>;
   export interface BaseModule {
-    name: string;
+    name?: string;
     instance: (options: any) => Instance | Promise<Instance>;
 
     database?: Partial<{
@@ -29,7 +30,7 @@ export namespace Module {
     resume?: (snapshot: JSON, options) => Instance;
   }
   export interface Plugin extends BaseModule {
-    handle?: (this: Instance) => ChainableHandler;
+    handle?: (this: Instance, bot: Bot) => ChainableHandler | ChainableHandler[];
     hooks?: Record<string, HookHandler>;
   }
 
@@ -40,13 +41,13 @@ export namespace Module {
     send: (
       target: Context.Sender,
       message: Context.Message | Context.Message[]
-    ) => Promise<any>;
+    ) => any | Promise<any>;
   }
   export type Features = Record<string, (this: Instance, ctx: Context.Context, ...args) => Promise<any>>
   export interface Platform extends BaseModule {
     platform: string,
-    receiver: (this: Instance) => Receiver | Promise<Receiver>;
-    transmitter: (this: Instance) => Transmitter | Promise<Transmitter>;
+    receiver: (this: Instance, bot: Bot) => Receiver | Promise<Receiver>;
+    transmitter: (this: Instance, bot: Bot) => Transmitter | Promise<Transmitter>;
     features: Features;
   }
 

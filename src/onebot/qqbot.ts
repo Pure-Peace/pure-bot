@@ -7,7 +7,7 @@ import * as dayjs from 'dayjs';
 
 import { MessageContext, contextFactory } from './context';
 import { Duration, isAsyncFn } from '../utils';
-import { createChain } from '../packages/chain-of-responsibility';
+import { createChain } from '../packages/utils/chain-of-responsibility';
 
 import { Module } from '../types';
 
