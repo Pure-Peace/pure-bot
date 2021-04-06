@@ -19,7 +19,7 @@ export namespace Context {
   };
   export type Channel = Sender;
   export type Group = Sender;
-  type MessageSegment = {
+  export type MessageSegment = {
     text?: string; // message in text
     raw?: string; // raw message
     notify?: Sender | Channel | Group; // @<userId> in onebot
