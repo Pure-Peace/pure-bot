@@ -2,7 +2,7 @@ const createChain = (processors) => {
     const onMessage = async (...args) => {
         const tempMiddlewares = [];
 
-        processors.reduce(async (next, middleware, index) => {
+        await processors.reduce(async (next, middleware, index) => {
             next = await next;
             if (!next) return;
             next = false;
