@@ -8,7 +8,7 @@ type Hooks = Array<{
 export default class BaseBot implements Bot {
   instances: Map<Symbol, Module.Instance>;
   filters: Map<Symbol, Module.FilterHandler>;
-  platformInterfaces: Map<Symbol, Module.PlatformInterface>;
+  platforms: Map<Symbol, Module.Platform>;
   platformFeatures: Map<Symbol, Module.Features>;
   receivers: Map<Symbol, Module.Receiver>;
   transmitters: Map<Symbol, Module.Transmitter>;
@@ -25,7 +25,7 @@ export default class BaseBot implements Bot {
   constructor (options) {
       this.instances = new Map();
       // this.transceivers = new Map();
-      this.platformInterfaces = new Map();
+      this.platforms = new Map();
       this.receivers = new Map();
       this.transmitters = new Map();
       this.platformFeatures = new Map();
@@ -41,13 +41,13 @@ export default class BaseBot implements Bot {
   }
 
   /**
-   * install a module, could be a PlatformInterface, a Plugin or a filter.
+   * install a module, could be a Platform, a Plugin or a filter.
    * @param module
    * @param options
    * @returns {Symbol}
    */
   async use (
-      module: Module.PlatformInterface | Module.Plugin | Module.Filter,
+      module: Module.Platform | Module.Plugin | Module.Filter,
       options: any = {}
   ) {
       if (!module.instance) { throw new Error('module should have an instance method') }
@@ -63,7 +63,7 @@ export default class BaseBot implements Bot {
    * @returns {Symbol}
    */
   async reuse (
-      module: Module.PlatformInterface | Module.Plugin | Module.Filter,
+      module: Module.Platform | Module.Plugin | Module.Filter,
       instance: Module.Instance
   ) {
       if ([...this.instances.values()].includes(instance)) { throw new Error('instance is already in the bot') }
@@ -80,7 +80,7 @@ export default class BaseBot implements Bot {
   async #installInstance (module, instance: Module.Instance) {
       const symbol = Symbol(`instance[${module.name}]`);
       this.instances.set(symbol, instance);
-      if (module.receiver) this.#installPlatformInterface(module, symbol);
+      if (module.receiver) this.#installPlatform(module, symbol);
       else if (module.handle) this.#installPlugin(module, symbol);
       else if (module.filter) this.#installFilter(module, symbol);
       else throw new Error('unknown type of Module');
@@ -96,7 +96,7 @@ export default class BaseBot implements Bot {
       const instance = this.instances.get(symbol);
       if (!instance) throw new Error('instance not exists');
 
-      if (this.platformInterfaces.get(symbol)) { this.#removePlatformInterface(symbol) }
+      if (this.platforms.get(symbol)) { this.#removePlatform(symbol) }
       if (this.plugins.get(symbol)) this.#removePlugin(symbol);
       if (this.filters.get(symbol)) this.#removeFilter(symbol);
 
@@ -104,8 +104,8 @@ export default class BaseBot implements Bot {
   }
 
   // @ts-expect-error: private function not supported yet but it works
-  async #installPlatformInterface (module: Module.PlatformInterface, symbol) {
-      this.platformInterfaces.set(symbol, module);
+  async #installPlatform (module: Module.Platform, symbol) {
+      this.platforms.set(symbol, module);
       const instance = this.instances.get(symbol);
 
       const receiver = await module.receiver.apply(instance);
@@ -117,11 +117,11 @@ export default class BaseBot implements Bot {
   }
 
   // @ts-expect-error: private function not supported yet but it works
-  async #removePlatformInterface (symbol: Symbol) {
+  async #removePlatform (symbol: Symbol) {
       this.#removePlatformEventsListeners(symbol);
       this.receivers.delete(symbol);
       this.transmitters.delete(symbol);
-      this.platformInterfaces.delete(symbol);
+      this.platforms.delete(symbol);
       this.instances.delete(symbol);
   }
 
@@ -237,7 +237,7 @@ export default class BaseBot implements Bot {
    * @param symbol platform symbol
    */
   async inboundMessage (messageEvent, symbol: Symbol) {
-      // const platform = this.platformInterfaces.get(symbol);
+      // const platform = this.platforms.get(symbol);
       const context = await this.createContext(messageEvent, symbol);
       this.handleInboundEvent(context);
   }
@@ -282,8 +282,8 @@ export default class BaseBot implements Bot {
   async createContext (event: Module.Event, symbol: Symbol) {
       const transmitter = this.transmitters.get(symbol);
       const platformFeatures = this.platformFeatures.get(symbol);
-      const platformInterface = this.platformInterfaces.get(symbol);
-      const platformName = platformInterface.platform;
+      const platform = this.platforms.get(symbol);
+      const platformName = platform.platform;
       return {
           rawEvent: event,
           transmitter,

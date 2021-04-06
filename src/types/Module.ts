@@ -43,7 +43,7 @@ export namespace Module {
     ) => Promise<any>;
   }
   export type Features = Record<string, (this: Instance, ...args) => Promise<any>>
-  export interface PlatformInterface extends BaseModule {
+  export interface Platform extends BaseModule {
     platform: string,
     receiver: (this: Instance) => Receiver;
     transmitter: (this: Instance) => Transmitter;

@@ -37,4 +37,4 @@ export default {
             send: (target, message) => console.log('sending message', message, 'to', target)
         };
     }
-} as Module.PlatformInterface;
+} as Module.Platform;
