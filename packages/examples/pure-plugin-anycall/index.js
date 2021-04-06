@@ -16,7 +16,7 @@ module.exports = {
         };
     },
     create () {
-        return (ctx, next) => {
+        return async (ctx, next) => {
             // message format: send <platform.subPlatform> <targetId> <message>
             const m = ctx.message;
             if (!m.text?.startsWith('!send')) return next();
@@ -29,7 +29,7 @@ module.exports = {
 
             if (
                 m.sender?.roles?.includes(consts.BOT_OWNER) ||
-                new Date() - ctx.database?.user?.lastSentMessage ?? new Date(0) > this.options.miniumSendingInterval ||
+                new Date() - ctx.database?.user?.lastSentMessage || new Date(0) > this.options.miniumSendingInterval ||
                 targetPlatform?.bots?.length
             ) {
                 for (bot of targetPlatform.bots) {
