@@ -13,9 +13,10 @@ export namespace Module {
     this: Instance,
     ctx: Context.Context
   ) => Promise<boolean>;
+  export type InitInstanceFunction = (options: any) => Instance | Promise<Instance>
   export interface BaseModule {
     name?: string;
-    instance: (options: any) => Instance | Promise<Instance>;
+    instance: InitInstanceFunction;
 
     database?: Partial<{
       fields: Record<string, any>;

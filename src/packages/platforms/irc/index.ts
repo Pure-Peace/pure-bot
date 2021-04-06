@@ -76,7 +76,7 @@ export default {
                     id: nick,
                     name: nick
                 },
-                channel: {
+                channel: to.startsWith('#') && {
                     id: to,
                     name: to
                 }
