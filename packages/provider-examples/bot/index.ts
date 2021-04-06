@@ -267,10 +267,12 @@ export default class BaseBot implements Bot {
       const platform = context.rawEvent.platform;
       const type = context.rawEvent.type;
       const scope = context.rawEvent.scope || 'default';
+      this.activeMiddlewareChain(context);
       this.filteredEvents.emit(`${type}`, context);
       this.filteredEvents.emit(`${scope}.${type}`, context);
-      if (platform) this.filteredEvents.emit(`${platform}.${scope}.${type}`, context);
-      this.activeMiddlewareChain(context);
+      if (!platform) return;
+      this.filteredEvents.emit(`${platform}.${type}`, context);
+      this.filteredEvents.emit(`${platform}.${scope}.${type}`, context);
   }
 
   /**
