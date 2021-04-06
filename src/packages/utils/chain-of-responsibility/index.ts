@@ -1,9 +1,8 @@
-// @ts-nocheck
 const createChain = (processors) => {
     const onMessage = async (...args) => {
         const tempMiddlewares = [];
 
-        await processors.reduce(async (next, middleware, index) => {
+        processors.reduce(async (next, middleware, index) => {
             next = await next;
             if (!next) return;
             next = false;
