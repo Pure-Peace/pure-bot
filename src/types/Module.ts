@@ -53,4 +53,10 @@ export namespace Module {
   export interface Filter extends BaseModule {
     filter: FilterHandler;
   }
+
+  export interface Event {
+    scope: string,
+    type: string,
+    platform?: string
+  }
 }

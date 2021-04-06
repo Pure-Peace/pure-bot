@@ -18,8 +18,8 @@ export namespace Context {
     file?: File; // send | recive image
     image?: File; // send | recive image
     audio?: File; // send | recive audio
-    json?: JSON; // send | recive json data
-    adaptiveCard?: JSON;
+    json?: Object; // send | recive json data
+    adaptiveCard?: Object;
   };
   export type Message = string | MessageSegment;
   export type Sender = {
@@ -58,8 +58,13 @@ export namespace Context {
   }
 
   export interface Context extends MessageContext {
-    platform: string;
-    bots: [Bot: Object];
+    rawEvent: Module.Event,
+    getPlatform?: (platformType: string) => [{
+      instance: Module.Instance,
+      transmitter: Module.Transmitter,
+      receiver: Module.Receiver,
+      features: Module.Features
+    }]
     quote: (msg: Message | [Message]) => Promise<void>;
     send: (msg: Message | [Message]) => Promise<void>;
     sender: Sender;

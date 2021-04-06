@@ -238,7 +238,7 @@ export default class BaseBot implements Bot {
    */
   async inboundMessage (messageEvent, symbol: Symbol) {
       // const platform = this.platformInterfaces.get(symbol);
-      const context = await this.handleContext(messageEvent, symbol);
+      const context = await this.createContext(messageEvent, symbol);
       this.handleInboundEvent(context);
   }
 
@@ -256,14 +256,20 @@ export default class BaseBot implements Bot {
       if (!(await this.filter(context))) return;
       // filtered message: handle in this bot
       this.filteredEvents.emit('event', context);
-      this.handleFilteredvent(context);
+      this.handleFilteredEvent(context);
   }
 
   /**
    * handle filtered message.
    * Chained Plugin handler will be invoked here
    */
-  async handleFilteredvent (context: Context.Context) {
+  async handleFilteredEvent (context: Context.Context) {
+      const platform = context.rawEvent.platform;
+      const type = context.rawEvent.type;
+      const scope = context.rawEvent.scope || 'default';
+      this.filteredEvents.emit(`${type}`, context);
+      this.filteredEvents.emit(`${scope}.${type}`, context);
+      if (platform) this.filteredEvents.emit(`${platform}.${scope}.${type}`, context);
       this.activeMiddlewareChain(context);
   }
 
@@ -271,12 +277,13 @@ export default class BaseBot implements Bot {
    * *for test* handle a Context.Context from transceiver event
    * @returns {Promise<Context.Context>}
    */
-  async handleContext (event, symbol: Symbol) {
+  async createContext (event: Module.Event, symbol: Symbol) {
       const transmitter = this.transmitters.get(symbol);
       const platformFeatures = this.platformFeatures.get(symbol);
-      const platformInterfaces = this.platformInterfaces.get(symbol);
-      const platformName = platformInterfaces.platform;
+      const platformInterface = this.platformInterfaces.get(symbol);
+      const platformName = platformInterface.platform;
       return {
+          rawEvent: event,
           transmitter,
           features: platformFeatures,
           ...transmitter,

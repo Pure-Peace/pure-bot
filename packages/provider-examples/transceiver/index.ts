@@ -26,7 +26,7 @@ export default {
                     id: '133466799',
                     name: 'arily'
                 }
-            });
+            } as Module.Event);
         }, 1000);
         return {
             source: this.myConnection
