@@ -289,12 +289,12 @@ export default class BaseBot implements Bot {
           ...transmitter,
           ...platformFeatures,
           [event.type]: event[event.type],
-          [event.scope]: {
+          [event.scope || 'default']: {
               [event.type]: event[event.type]
           },
           [platformName]: {
               [event.type]: event[event.type],
-              [event.scope]: {
+              [event.scope || 'default']: {
                   [event.type]: event[event.type]
               }
           }
