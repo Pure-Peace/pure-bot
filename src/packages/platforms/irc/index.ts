@@ -15,8 +15,8 @@ const transformSegment = (segment: Context.Message) => {
 export default {
     name: 'pure-platform-irc',
     platform: 'irc',
-    instance (options) {
-        return {
+    async instance (options) {
+        const self = {
             ...options,
             options,
             client: new irc.Client(options.host, options.nickname, {
@@ -25,16 +25,14 @@ export default {
             }),
             event: new EventEmitter()
         };
-    },
-    async receiver (bot) {
         // const getChannel = async (channelId) => {
         //     return await getChannelList().find((channel) => channel.name === channelId);
         // };
         const getChannelList = async () => {
-            if (this.list) return this.list;
-            this.client.list();
-            const list = await pEvent(this.client, 'channellist', { timeout: this.timeout || 10 * 1000 });
-            this.list = list.map((channel) => ({
+            if (self.list) return self.list;
+            self.client.list();
+            const list = await pEvent(self.client, 'channellist', { timeout: self.timeout || 10 * 1000 });
+            self.list = list.map((channel) => ({
                 channelId: channel.name,
                 channelName: channel.name,
                 topic: channel.topic
@@ -42,11 +40,11 @@ export default {
             return list;
         };
         const logger = console;
-        this.client.connect();
-        this.client.addListener('error', function (message) {
+        self.client.connect();
+        self.client.addListener('error', function (message) {
             logger.error('error: ', message);
         });
-        const data = await pEvent(this.client, 'registered', { timeout: this.timeout || 10 * 1000 }).catch(error => {
+        const data = await pEvent(self.client, 'registered', { timeout: self.timeout || 10 * 1000 }).catch(error => {
             console.log(error);
         });
         if (!data) throw new Error('error when logging in');
@@ -55,9 +53,9 @@ export default {
 
         const channels = await getChannelList();
         console.table(channels);
-        channels.map((channel) => this.client.join(channel.channelId, () => logger.log('joined', channel.channelId)));
+        channels.map((channel) => self.client.join(channel.channelId, () => logger.log('joined', channel.channelId)));
         logger.log('joined all channels');
-        this.client.on('message', (nick, to, text, message) => {
+        self.client.on('message', (nick, to, text, message) => {
             // logger.log('received message', { nick, to, text });
             const data = {
                 id: [nick, to, Math.random()],
@@ -66,7 +64,7 @@ export default {
                 scope: to.startsWith('#') ? 'channel' : 'private',
                 message: {
                     text,
-                    notify: text.includes(this.options.nickname),
+                    notify: text.includes(self.options.nickname),
                     segments: [{
                         text
                     }]
@@ -82,8 +80,11 @@ export default {
                     }
                 }
             } as Module.Event;
-            this.event.emit('event', data);
+            self.event.emit('event', data);
         });
+        return self;
+    },
+    async receiver (bot) {
         return {
             source: this.event
         };

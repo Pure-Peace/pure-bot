@@ -1,10 +1,13 @@
 import platform from '../../packages/platforms/irc';
 import Bot from '../../packages/bot';
 import ModuleBuilder from '../../packages/utils/module-builder';
-
+const filter = new ModuleBuilder().filter((context) => {
+    console.log(context.source.sender);
+    context.send('your message got filtered');
+    return false;
+}).export();
 (async () => {
-    const bot = new Bot({});
-    const irc = bot.use(platform, {
+    const ircInstance = await platform.instance({
         host: '47.243.59.11',
         nickname: 'arilychan',
         username: 'arilychan',
@@ -12,11 +15,30 @@ import ModuleBuilder from '../../packages/utils/module-builder';
             channelId: '#osu',
             channelName: '#osu'
         }],
-        password: 'bdd3729edf783bdaa7e5d5d2c9f06a23'
+        password: ''
     });
-    const anonymouns = await bot.use(new ModuleBuilder().handle(() => (context) => context.message && context.send(['收到消息:', context.message.text])).export());
-    bot.use(new ModuleBuilder().filter((context) => {
-        console.log(context.source.sender);
-        return context.source.sender && context.source.sender?.id === 'arily';
-    }).export());
+
+    const bot = new Bot({});
+    const manager = new Bot({});
+    bot.reuse(platform, ircInstance);
+    manager.reuse(platform, ircInstance);
+
+    await bot.use(new ModuleBuilder().handle(() => (context) => context.message && context.send(['收到消息:', context.message.text])).export());
+
+    let filterSymbol = await bot.use(filter);
+    let filterInstance;
+    manager.use({
+        instance: () => ({
+            switched: true
+        }),
+        handle () {
+            return async (context, next) => {
+                const isManager = context.source?.sender?.id === 'arily';
+                if (!isManager) return next();
+                if (context.message.text !== '!switch') return next();
+                this.switched ? filterInstance = await bot.remove(filterSymbol) : filterSymbol = await bot.reuse(filter, filterInstance);
+                this.switched = !this.switched;
+            };
+        }
+    });
 })();
