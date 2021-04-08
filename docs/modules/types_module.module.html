@@ -104,10 +104,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-namespace">
 					<a name="chainablehandler" class="tsd-anchor"></a>
 					<h3>Chainable<wbr>Handler</h3>
-					<div class="tsd-signature tsd-kind-icon">Chainable<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a>, next<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#nextfunction" class="tsd-signature-type" data-tsd-kind="Type alias">NextFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span></div>
+					<div class="tsd-signature tsd-kind-icon">Chainable<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a>, next<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#nextfunction" class="tsd-signature-type" data-tsd-kind="Type alias">NextFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L6">Documents/GitHub/pure-bot/src/types/Module.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L7">Documents/GitHub/pure-bot/src/types/Module.ts:7</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -115,14 +115,14 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a>, next<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#nextfunction" class="tsd-signature-type" data-tsd-kind="Type alias">NextFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a>, next<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#nextfunction" class="tsd-signature-type" data-tsd-kind="Type alias">NextFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>ctx: <a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+												<h5>ctx: <a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a></h5>
 											</li>
 											<li>
 												<h5>next: <a href="types_module.module.html#nextfunction" class="tsd-signature-type" data-tsd-kind="Type alias">NextFunction</a></h5>
@@ -138,20 +138,27 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-namespace">
 					<a name="features" class="tsd-anchor"></a>
 					<h3>Features</h3>
-					<div class="tsd-signature tsd-kind-icon">Features<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a>, <span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">Features<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a>, <span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L52">Documents/GitHub/pure-bot/src/types/Module.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L70">Documents/GitHub/pure-bot/src/types/Module.ts:70</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>platform specified features. <br>Will be destructed into <a href="types_context.context.html#all">Context.All</a>.</p>
+							<pre><code class="language-Typescript"><span style="color: #001080">context</span><span style="color: #000000"> = { </span><span style="color: #001080">context</span><span style="color: #000000">, ...</span><span style="color: #001080">Features</span><span style="color: #000000"> };</span>
+</code></pre>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-namespace">
 					<a name="filterhandler" class="tsd-anchor"></a>
 					<h3>Filter<wbr>Handler</h3>
-					<div class="tsd-signature tsd-kind-icon">Filter<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">Filter<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L12">Documents/GitHub/pure-bot/src/types/Module.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L13">Documents/GitHub/pure-bot/src/types/Module.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -159,7 +166,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -169,7 +176,7 @@
 												<h5>this: <a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a></h5>
 											</li>
 											<li>
-												<h5>ctx: <a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+												<h5>ctx: <a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -182,10 +189,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-namespace">
 					<a name="hookhandler" class="tsd-anchor"></a>
 					<h3>Hook<wbr>Handler</h3>
-					<div class="tsd-signature tsd-kind-icon">Hook<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+					<div class="tsd-signature tsd-kind-icon">Hook<wbr>Handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L11">Documents/GitHub/pure-bot/src/types/Module.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L12">Documents/GitHub/pure-bot/src/types/Module.ts:12</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -193,7 +200,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>this<span class="tsd-signature-symbol">: </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a>, ctx<span class="tsd-signature-symbol">: </span><a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -203,7 +210,7 @@
 												<h5>this: <a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a></h5>
 											</li>
 											<li>
-												<h5>ctx: <a href="../interfaces/types_context.context.context.html" class="tsd-signature-type" data-tsd-kind="Interface">Context</a></h5>
+												<h5>ctx: <a href="types_context.context.html#all" class="tsd-signature-type" data-tsd-kind="Type alias">All</a></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -219,7 +226,7 @@
 					<div class="tsd-signature tsd-kind-icon">Init<wbr>Instance<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="types_module.module.html#instance" class="tsd-signature-type" data-tsd-kind="Type alias">Instance</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L16">Documents/GitHub/pure-bot/src/types/Module.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L17">Documents/GitHub/pure-bot/src/types/Module.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -250,7 +257,7 @@
 					<div class="tsd-signature tsd-kind-icon">Instance<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L10">Documents/GitHub/pure-bot/src/types/Module.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L11">Documents/GitHub/pure-bot/src/types/Module.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -260,7 +267,7 @@
 					<div class="tsd-signature tsd-kind-icon">Next<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><a href="types_module.module.html#nextfunction" class="tsd-signature-type" data-tsd-kind="Type alias">NextFunction</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Module.ts#L5">Documents/GitHub/pure-bot/src/types/Module.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Module.ts#L6">Documents/GitHub/pure-bot/src/types/Module.ts:6</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -298,6 +305,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="packages_bot.html">packages/bot</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="packages_bot_context.html">packages/bot/context</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="packages_platforms_irc.html">packages/platforms/irc</a>

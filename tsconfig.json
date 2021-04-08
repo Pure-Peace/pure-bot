@@ -1,29 +1,31 @@
 {
-    "compileOnSave": false,
-    "compilerOptions": {
-        "allowJs": false,
-        "alwaysStrict": true,
-        "baseUrl": "src",
-        "declaration": true,
-        "declarationMap": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "noImplicitAny": false,
-        "outDir": "./dist",
-        "removeComments": false,
-        "sourceMap": false,
-        "target": "ESNext",
-        "typeRoots": [
-            "node_modules/@types"
-        ],
-        "paths": {
-            "platform/*": ["packages/platforms/*"]
-        },
-        "lib": [
-            "es2020",
-            "DOM"
-        ]
-    }
+  "compileOnSave": false,
+  "compilerOptions": {
+    "allowJs": false,
+    "alwaysStrict": true,
+    "baseUrl": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "./dist",
+    "removeComments": false,
+    "sourceMap": false,
+    "target": "ESNext",
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "platform/*": ["packages/platforms/*"]
+    },
+    "lib": ["es2020", "DOM"]
+  },
+  "exclude": [
+    "unused",
+    "dist",
+    "node_modules",
+    "bower_components",
+    "jspm_packages"
+  ]
 }

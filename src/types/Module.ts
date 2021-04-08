@@ -1,17 +1,18 @@
 import { EventEmitter } from 'events';
 import { Bot } from './Bot';
 import { Context } from './Context';
+import * as E from './Event';
 export namespace Module {
   export type NextFunction = (arg: void | NextFunction) => void;
   export type ChainableHandler = (
-    ctx: Context.Context,
+    ctx: Context.All,
     next: NextFunction
   ) => any;
   export type Instance = any;
-  export type HookHandler = (this: Instance, ctx: Context.Context) => void;
+  export type HookHandler = (this: Instance, ctx: Context.All) => void;
   export type FilterHandler = (
     this: Instance,
-    ctx: Context.Context
+    ctx: Context.All
   ) => boolean | Promise<boolean>;
   export type InitInstanceFunction = (
     options: any
@@ -29,9 +30,12 @@ export namespace Module {
     }>;
 
     // not first problem: hot reload across different process
-    sleep?: (this: Instance) => JSON;
-    resume?: (snapshot: JSON, options) => Instance;
+    sleep?: (this: Instance) => Object;
+    resume?: (snapshot: Object, options) => Instance;
   }
+  /**
+   * plugin module should have at least a handle() function or a hook
+   */
   export interface Plugin extends BaseModule {
     handle?: (
       this: Instance,
@@ -40,18 +44,32 @@ export namespace Module {
     hooks?: Record<string, HookHandler>;
   }
 
+  /**
+   * a Platform should emit received message in Receiver.source<br>
+   * event format should compatible with [[Module.Event]]
+   */
   export interface Receiver {
     source: EventEmitter;
   }
+  /**
+   * a Platform should return a Transmitter implement this interface for bot to send events. <br>
+   * will be passed to handler as [[Context.transmitter]]
+   */
   export interface Transmitter {
     send: (
-      target: Context.Sender,
+      target: Context.Source.Sender,
       message: Context.Message | Context.Message[]
     ) => any | Promise<any>;
   }
+  /**
+   * platform specified features. <br>Will be destructed into [[Context.All]].
+   * ```Typescript
+   * context = { context, ...Features };
+   * ```
+   */
   export type Features = Record<
     string,
-    (this: Instance, ctx: Context.Context, ...args) => any | Promise<any>
+    (this: Instance, ctx: Context.All, ...args) => any | Promise<any>
   >;
   export interface Platform extends BaseModule {
     platform: string;
@@ -69,13 +87,9 @@ export namespace Module {
 
   export interface Event {
     id: any;
-    scope: string;
-    type: string;
-    platform?: string;
-    source: {
-      sender: Context.Sender;
-      channel?: Context.Channel;
-      group?: Context.Group;
-    };
+    scope: E.Scope;
+    type: E.EventType;
+    platform?: E.PlatformType;
+    source: Context.Source.Interface;
   }
 }

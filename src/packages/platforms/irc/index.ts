@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { Module, Context } from 'types';
-
 const EventEmitter = require('events');
 const irc = require('irc');
 const pEvent = require('p-event');
@@ -71,7 +70,7 @@ export default {
                     segments: [{
                         text
                     }]
-                } as Context.Message,
+                },
                 source: {
                     sender: {
                         id: nick,

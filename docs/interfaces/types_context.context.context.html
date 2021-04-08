@@ -71,16 +71,18 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>context interface</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="../modules/types_context.context.html#messagecontext" class="tsd-signature-type" data-tsd-kind="Type alias">MessageContext</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">Context</span>
-							</li>
-						</ul>
+						<span class="target">Context</span>
 					</li>
 				</ul>
 			</section>
@@ -95,21 +97,12 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#features" class="tsd-kind-icon">features</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#getplatform" class="tsd-kind-icon">get<wbr>Platform</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="types_context.context.context.html#message" class="tsd-kind-icon">message</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#notify" class="tsd-kind-icon">notify</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#quote" class="tsd-kind-icon">quote</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#rawevent" class="tsd-kind-icon">raw<wbr>Event</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#send" class="tsd-kind-icon">send</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#source" class="tsd-kind-icon">source</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="types_context.context.context.html#transmitter" class="tsd-kind-icon">transmitter</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-inherited">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="types_context.context.context.html#discord" class="tsd-kind-icon">discord</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="types_context.context.context.html#kaiheila" class="tsd-kind-icon">kaiheila</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="types_context.context.context.html#onebot" class="tsd-kind-icon">onebot</a></li>
 							</ul>
 						</section>
 					</div>
@@ -123,7 +116,7 @@
 					<div class="tsd-signature tsd-kind-icon">database<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>bot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>channel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>user<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L77">Documents/GitHub/pure-bot/src/types/Context.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L105">Documents/GitHub/pure-bot/src/types/Context.ts:105</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -147,7 +140,7 @@
 					<div class="tsd-signature tsd-kind-icon">features<span class="tsd-signature-symbol">:</span> <a href="../modules/types_module.module.html#features" class="tsd-signature-type" data-tsd-kind="Type alias">Features</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L76">Documents/GitHub/pure-bot/src/types/Context.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L104">Documents/GitHub/pure-bot/src/types/Context.ts:104</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -157,9 +150,14 @@
 					<div class="tsd-signature tsd-kind-icon">get<wbr>Platform<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>platformType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-symbol">{ </span>features<span class="tsd-signature-symbol">: </span><a href="../modules/types_module.module.html#features" class="tsd-signature-type" data-tsd-kind="Type alias">Features</a><span class="tsd-signature-symbol">; </span>instance<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>receiver<span class="tsd-signature-symbol">: </span><a href="types_module.module.receiver.html" class="tsd-signature-type" data-tsd-kind="Interface">Receiver</a><span class="tsd-signature-symbol">; </span>transmitter<span class="tsd-signature-symbol">: </span><a href="types_module.module.transmitter.html" class="tsd-signature-type" data-tsd-kind="Interface">Transmitter</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L57">Documents/GitHub/pure-bot/src/types/Context.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L83">Documents/GitHub/pure-bot/src/types/Context.ts:83</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>return platforms that declared its type as <code>platformType</code></p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -188,18 +186,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L55">Documents/GitHub/pure-bot/src/types/Context.ts:55</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="message" class="tsd-anchor"></a>
-					<h3>message</h3>
-					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <a href="../modules/types_context.context.html#messagesegment" class="tsd-signature-type" data-tsd-kind="Type alias">MessageSegment</a><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>channel<span class="tsd-signature-symbol">?: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a><span class="tsd-signature-symbol">; </span>group<span class="tsd-signature-symbol">?: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a><span class="tsd-signature-symbol">; </span>raw<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>segments<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#messagesegment" class="tsd-signature-type" data-tsd-kind="Type alias">MessageSegment</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>sender<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a><span class="tsd-signature-symbol">; </span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from MessageContext.message</p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L51">Documents/GitHub/pure-bot/src/types/Context.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L78">Documents/GitHub/pure-bot/src/types/Context.ts:78</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -209,9 +196,14 @@
 					<div class="tsd-signature tsd-kind-icon">notify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#message" class="tsd-signature-type" data-tsd-kind="Type alias">Message</a><span class="tsd-signature-symbol"> | </span><a href="../modules/types_context.context.html#message" class="tsd-signature-type" data-tsd-kind="Type alias">Message</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L69">Documents/GitHub/pure-bot/src/types/Context.ts:69</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L101">Documents/GitHub/pure-bot/src/types/Context.ts:101</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>notify: <code>CQ:at</code> in onebot</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -240,9 +232,14 @@
 					<div class="tsd-signature tsd-kind-icon">quote<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#message" class="tsd-signature-type" data-tsd-kind="Type alias">Message</a><span class="tsd-signature-symbol"> | </span><a href="../modules/types_context.context.html#message" class="tsd-signature-type" data-tsd-kind="Type alias">Message</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L67">Documents/GitHub/pure-bot/src/types/Context.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L96">Documents/GitHub/pure-bot/src/types/Context.ts:96</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>quote: <code>CQ:reply</code> in onebot</p>
+						</div>
+					</div>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
@@ -271,7 +268,7 @@
 					<div class="tsd-signature tsd-kind-icon">raw<wbr>Event<span class="tsd-signature-symbol">:</span> <a href="types_module.module.event.html" class="tsd-signature-type" data-tsd-kind="Interface">Event</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L56">Documents/GitHub/pure-bot/src/types/Context.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L79">Documents/GitHub/pure-bot/src/types/Context.ts:79</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -281,7 +278,7 @@
 					<div class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#message" class="tsd-signature-type" data-tsd-kind="Type alias">Message</a><span class="tsd-signature-symbol"> | </span><a href="../modules/types_context.context.html#message" class="tsd-signature-type" data-tsd-kind="Type alias">Message</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L68">Documents/GitHub/pure-bot/src/types/Context.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L97">Documents/GitHub/pure-bot/src/types/Context.ts:97</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -309,26 +306,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="source" class="tsd-anchor"></a>
 					<h3>source</h3>
-					<div class="tsd-signature tsd-kind-icon">source<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>channel<span class="tsd-signature-symbol">?: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a><span class="tsd-signature-symbol">; </span>group<span class="tsd-signature-symbol">?: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a><span class="tsd-signature-symbol">; </span>sender<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a><span class="tsd-signature-symbol"> }</span></div>
+					<div class="tsd-signature tsd-kind-icon">source<span class="tsd-signature-symbol">:</span> <a href="types_context.context.source.interface.html" class="tsd-signature-type" data-tsd-kind="Interface">Interface</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L70">Documents/GitHub/pure-bot/src/types/Context.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L102">Documents/GitHub/pure-bot/src/types/Context.ts:102</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> channel<span class="tsd-signature-symbol">?: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a></h5>
-							</li>
-							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> group<span class="tsd-signature-symbol">?: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a></h5>
-							</li>
-							<li class="tsd-parameter">
-								<h5>sender<span class="tsd-signature-symbol">: </span><a href="../modules/types_context.context.html#sender" class="tsd-signature-type" data-tsd-kind="Type alias">Sender</a></h5>
-							</li>
-						</ul>
-					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="transmitter" class="tsd-anchor"></a>
@@ -336,35 +319,8 @@
 					<div class="tsd-signature tsd-kind-icon">transmitter<span class="tsd-signature-symbol">:</span> <a href="types_module.module.transmitter.html" class="tsd-signature-type" data-tsd-kind="Interface">Transmitter</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/6f350a7/src/types/Context.ts#L75">Documents/GitHub/pure-bot/src/types/Context.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/Pure-Peace/pure-bot/blob/f5cccec/src/types/Context.ts#L103">Documents/GitHub/pure-bot/src/types/Context.ts:103</a></li>
 						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-					<a name="discord" class="tsd-anchor"></a>
-					<h3>discord</h3>
-					<div class="tsd-signature tsd-kind-icon">discord<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from MessageContext.discord</p>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-					<a name="kaiheila" class="tsd-anchor"></a>
-					<h3>kaiheila</h3>
-					<div class="tsd-signature tsd-kind-icon">kaiheila<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from MessageContext.kaiheila</p>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-					<a name="onebot" class="tsd-anchor"></a>
-					<h3>onebot</h3>
-					<div class="tsd-signature tsd-kind-icon">onebot<span class="tsd-signature-symbol">:</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from MessageContext.onebot</p>
 					</aside>
 				</section>
 			</section>
@@ -380,6 +336,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/packages_bot.html">packages/bot</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/packages_bot_context.html">packages/bot/context</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/packages_platforms_irc.html">packages/platforms/irc</a>
@@ -410,6 +369,11 @@
 						<ul>
 							<li class="current tsd-kind-namespace tsd-parent-kind-module">
 								<a href="../modules/types_context.context.html">Context</a>
+								<ul>
+									<li class=" tsd-kind-namespace tsd-parent-kind-namespace">
+										<a href="../modules/types_context.context.source.html">Source</a>
+									</li>
+								</ul>
 							</li>
 						</ul>
 					</li>
@@ -440,9 +404,6 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="types_context.context.context.html#id" class="tsd-kind-icon">id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="types_context.context.context.html#message" class="tsd-kind-icon">message</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="types_context.context.context.html#notify" class="tsd-kind-icon">notify</a>
 							</li>
@@ -461,15 +422,6 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="types_context.context.context.html#transmitter" class="tsd-kind-icon">transmitter</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="types_context.context.context.html#discord" class="tsd-kind-icon">discord</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="types_context.context.context.html#kaiheila" class="tsd-kind-icon">kaiheila</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="types_context.context.context.html#onebot" class="tsd-kind-icon">onebot</a>
-							</li>
 						</ul>
 					</li>
 				</ul>
@@ -478,13 +430,10 @@
 						<a href="types_context.context.inboundevent.html" class="tsd-kind-icon">Inbound<wbr>Event</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
-						<a href="../modules/types_context.context.html#channel" class="tsd-kind-icon">Channel</a>
+						<a href="../modules/types_context.context.html#all" class="tsd-kind-icon">All</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
 						<a href="../modules/types_context.context.html#file" class="tsd-kind-icon">File</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
-						<a href="../modules/types_context.context.html#group" class="tsd-kind-icon">Group</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
 						<a href="../modules/types_context.context.html#message" class="tsd-kind-icon">Message</a>
@@ -503,9 +452,6 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
 						<a href="../modules/types_context.context.html#scopedevents" class="tsd-kind-icon">Scoped<wbr>Events</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-namespace">
-						<a href="../modules/types_context.context.html#sender" class="tsd-kind-icon">Sender</a>
 					</li>
 				</ul>
 			</nav>

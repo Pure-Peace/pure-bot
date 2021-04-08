@@ -1,11 +1,9 @@
-import { Bot, Module, Context } from '../../types';
+import { Bot, Module, Context, Hooks } from '../../types';
 import { createChain } from '../utils/chain-of-responsibility';
 import { EventEmitter } from 'events';
-type Hooks = Array<{
-  hookName: string;
-  handler: (...args) => void;
-}>;
+import createContext from './context';
 export default class BaseBot implements Bot {
+  options: Object;
   instances: Map<Symbol, Module.Instance>;
   filters: Map<Symbol, Module.FilterHandler>;
   platforms: Map<Symbol, Module.Platform>;
@@ -19,7 +17,6 @@ export default class BaseBot implements Bot {
 
   // createChain result
   activeMiddlewareChain: Module.HookHandler;
-  options: any;
   inboundEvents: EventEmitter;
   filteredEvents: EventEmitter;
   constructor (options) {
@@ -50,7 +47,9 @@ export default class BaseBot implements Bot {
       module: Module.Platform | Module.Plugin | Module.Filter,
       options: any = {}
   ) {
-      if (!module.instance) { throw new Error('module should have an instance method') }
+      if (!module.instance) {
+          throw new Error('module should have an instance method');
+      }
 
       const instance = await module.instance(options);
       return this.#installInstance(module, instance);
@@ -66,7 +65,9 @@ export default class BaseBot implements Bot {
       module: Module.Platform | Module.Plugin | Module.Filter,
       instance: Module.Instance
   ) {
-      if ([...this.instances.values()].includes(instance)) { throw new Error('instance is already in the bot') }
+      if ([...this.instances.values()].includes(instance)) {
+          throw new Error('instance is already in the bot');
+      }
       return this.#installInstance(module, instance);
   }
 
@@ -96,7 +97,9 @@ export default class BaseBot implements Bot {
       const instance = this.instances.get(symbol);
       if (!instance) throw new Error('instance not exists');
 
-      if (this.platforms.get(symbol)) { this.#removePlatform(symbol) }
+      if (this.platforms.get(symbol)) {
+          this.#removePlatform(symbol);
+      }
       if (this.plugins.get(symbol)) this.#removePlugin(symbol);
       if (this.filters.get(symbol)) this.#removeFilter(symbol);
 
@@ -227,7 +230,7 @@ export default class BaseBot implements Bot {
    * true for message passed the filter
    * @returns {Promise<boolean>}
    */
-  async filter (context: Context.Context) {
+  async filter (context: Context.All) {
       for (const [, filter] of this.filters.entries()) {
           if (!(await filter(context))) return false;
           else continue;
@@ -254,7 +257,7 @@ export default class BaseBot implements Bot {
    * calls handleFilteredvent method
    * @returns {void}
    */
-  async handleInboundEvent (context: Context.Context) {
+  async handleInboundEvent (context: Context.All) {
       // all messages: usable to extract events for chaining events
       this.inboundEvents.emit('event', context);
       if (!(await this.filter(context))) return;
@@ -267,7 +270,7 @@ export default class BaseBot implements Bot {
    * handle filtered message.
    * Chained Plugin handler will be invoked here
    */
-  async handleFilteredEvent (context: Context.Context) {
+  async handleFilteredEvent (context: Context.All) {
       const platform = context.rawEvent.platform;
       const type = context.rawEvent.type;
       const scope = context.rawEvent.scope || 'default';
@@ -280,41 +283,10 @@ export default class BaseBot implements Bot {
   }
 
   /**
-   * *for test* handle a Context.Context from transceiver event
-   * @returns {Promise<Context.Context>}
+   * *for test* handle a Context.All from transceiver event
+   * @returns {Promise<Context.All>}
    */
   async createContext (event: Module.Event, symbol: Symbol) {
-      const transmitter = this.transmitters.get(symbol);
-      const platformFeatures = this.platformFeatures.get(symbol);
-      const platform = this.platforms.get(symbol);
-      const platformName = platform.platform;
-      const source = {
-          sender: event.source.sender,
-          channel: event.source.channel,
-          group: event.source.group
-      };
-      const copiedEvent = {
-          ...event,
-          source
-      };
-      return {
-          rawEvent: copiedEvent,
-          transmitter,
-          features: platformFeatures,
-          ...platformFeatures,
-          source,
-          [event.type]: event[event.type],
-          [event.scope || 'default']: {
-              [event.type]: copiedEvent[event.type]
-          },
-          [platformName]: {
-              [event.type]: copiedEvent[event.type],
-              [event.scope || 'default']: {
-                  [event.type]: copiedEvent[event.type]
-              },
-              source
-          },
-          send: (message) => transmitter.send(event.source.channel || event.source.sender, message)
-      } as Context.Context;
+      return createContext(this, event, symbol);
   }
 }
