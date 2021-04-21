@@ -1,9 +1,12 @@
 import platform from '../../packages/platforms/irc';
 import Bot from '../../packages/bot';
 import ModuleBuilder from '../../packages/utils/module-builder';
-const filter = new ModuleBuilder().filter((context) => {
+import { Context } from 'types';
+const dev = [];
+const filter = new ModuleBuilder().filter((context: Context.All) => {
+    if (!dev.includes(context.source.sender.id)) return false;
     console.log(context.source.sender);
-    context.send('your message got filtered');
+    if (context.private?.message) context.send('your message got filtered');
     return false;
 }).export();
 (async () => {
@@ -29,15 +32,23 @@ const filter = new ModuleBuilder().filter((context) => {
     let filterInstance;
     manager.use({
         instance: () => ({
-            switched: true
+            allow: false
         }),
         handle () {
             return async (context, next) => {
                 const isManager = context.source?.sender?.id === 'arily';
                 if (!isManager) return next();
-                if (context.message.text !== '!switch') return next();
-                this.switched ? filterInstance = await bot.remove(filterSymbol) : filterSymbol = await bot.reuse(filter, filterInstance);
-                this.switched = !this.switched;
+                if (context.message.text === '!switch') {
+                    this.switched ? filterSymbol = await bot.reuse(filter, filterInstance) : filterInstance = await bot.remove(filterSymbol);
+                    this.switched = !this.switched;
+                    context.send(['bot:', this.switched ? 'active' : 'disabled']);
+                }
+                if (context.message.text.startsWith('!dev')) {
+                    const id = context.message.text.slice(4).trim();
+                    if (!id) return context.send(['current tester: ', dev.join(', ')]);
+                    if (!dev.includes(id)) context.send(`add ${id} to test list`).then(() => dev.push(id));
+                    else context.send(`remove ${id} from test list`).then(() => dev.splice(dev.findIndex(u => u === id), 1));
+                } else next();
             };
         }
     });

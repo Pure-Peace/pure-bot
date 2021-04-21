@@ -72,7 +72,7 @@ export namespace Module {
     (this: Instance, ctx: Context.All, ...args) => any | Promise<any>
   >;
   export interface Platform extends BaseModule {
-    platform: string;
+    platform: string| string[];
     receiver: (this: Instance, bot: Bot) => Receiver | Promise<Receiver>;
     transmitter: (
       this: Instance,

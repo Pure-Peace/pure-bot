@@ -2,10 +2,8 @@ import { Bot, Context, Module } from 'types';
 const messageMixin = (message: Context.Message | Context.Message[], mixin: Object): Context.Message | Context.Message[] => {
     if (Array.isArray(message)) {
         const firstItem = message.findIndex(m => m);
-        // @ts-expect-error
-        // eslint-disable-next-line no-unused-vars
-        message[firstItem] = messageMixin(message[firstItem], mixin);
-        return message;
+        message[firstItem] = messageMixin(message[firstItem], mixin) as Context.Message;
+        return message as Context.Message[];
     }
     if (typeof message === 'object') {
         return {
@@ -17,46 +15,48 @@ const messageMixin = (message: Context.Message | Context.Message[], mixin: Objec
         return {
             text: message,
             ...mixin
-        };
+        } as Context.Message;
     }
     throw new Error('unknown type of message');
 };
 
 export default function createContext (bot: Bot, event: Module.Event, symbol: Symbol): Context.All {
-    const transmitter = bot.transmitters.get(symbol) as Module.Transmitter;
-    const platformFeatures = bot.platformFeatures.get(symbol) as Module.Features;
-    const platform = bot.platforms.get(symbol);
-    const platformName = platform.platform;
-    const source = {
+    const transmitter: Module.Transmitter = bot.transmitters.get(symbol) as Module.Transmitter;
+    const platformFeatures: Module.Features = bot.platformFeatures.get(symbol) as Module.Features;
+    const platform: Module.Platform = bot.platforms.get(symbol);
+    const platformName: string[] = (event.platform && [event.platform]) || Array.isArray(platform.platform) ? platform.platform as string[] : [platform.platform] as string[];
+    const source: Context.Source.Interface = {
         sender: event.source.sender,
         channel: event.source.channel,
         group: event.source.group
     };
-    const copiedEvent = {
+    const copiedEvent: Module.Event = {
         ...event,
         source
     } as Module.Event;
-    const send = (message: Context.Message | Context.Message[]) => transmitter.send(event.source.channel || event.source.sender, message);
-    const quote = (message: Context.Message | Context.Message[]) => send(messageMixin(message, { quote: source.sender }));
-    const notify = (message: Context.Message | Context.Message[]) => send(messageMixin(message, { notify: source.sender }));
+    const mixin: object = {
+        [event.type]: copiedEvent[event.type],
+        [event.scope || 'default']: {
+            [event.type]: copiedEvent[event.type]
+        },
+        source
+    };
+    const platformMixin: object = platformName.reduce((obj, p) => {
+        obj[p] = mixin;
+        return obj;
+    }, {});
+    const send = async (message: Context.Message | Context.Message[]) => transmitter.send(event.source.channel || event.source.sender, message);
+    const quote = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { quote: source.sender }));
+    const notify = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { notify: source.sender }));
     return {
         id: copiedEvent.id,
         rawEvent: copiedEvent,
         transmitter,
         features: platformFeatures,
         ...platformFeatures,
+        ...platformMixin,
+        ...mixin,
         source,
-        [event.type]: event[event.type],
-        [event.scope || 'default']: {
-            [event.type]: copiedEvent[event.type]
-        },
-        [platformName]: {
-            [event.type]: copiedEvent[event.type],
-            [event.scope || 'default']: {
-                [event.type]: copiedEvent[event.type]
-            },
-            source
-        },
         send,
         quote,
         notify

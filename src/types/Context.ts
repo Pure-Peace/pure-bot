@@ -108,7 +108,7 @@ export namespace Context {
       bot: any;
     };
   }
-  export type MessageContext = Context & Partial<PlatformContext> & {
+  export type MessageContext = Context & Partial<PlatformContext> & Partial<ScopedContext> & {
     message: InboundEvent['message'];
   };
   export type All = MessageContext
