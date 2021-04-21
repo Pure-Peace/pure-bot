@@ -29,9 +29,15 @@ export namespace Module {
       collections: Record<string, string>;
     }>;
 
+    /**
+     * this hook will be called when Module is removed from bot.<br>
+     * useful case: remove listeners, clear cache... etc.
+     */
+    uninstall?: (this: Instance) => any | Promise<any>
+
     // not first problem: hot reload across different process
-    sleep?: (this: Instance) => Object;
-    resume?: (snapshot: Object, options) => Instance;
+    freeze?: (this: Instance) => Object;
+    unfreeze?: (snapshot: Object, options) => Instance;
   }
   /**
    * plugin module should have at least a handle() function or a hook

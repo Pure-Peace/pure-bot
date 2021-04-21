@@ -19,6 +19,9 @@ export namespace Context {
    * Source: who/where a event is emitted/triggered
    */
   export namespace Source {
+    /**
+     * Module could append additional information to Sender and accessable as target in Module.Transmitter.send()
+     */
     export type Sender = {
       name?: string;
       id:
