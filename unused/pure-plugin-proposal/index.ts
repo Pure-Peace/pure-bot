@@ -13,7 +13,7 @@ module.exports = {
             instanceVariable: 0
         };
     },
-    create () {
+    handle () {
         singleton.count += 1;
         console.log('have access to singleton variables', singleton);
         console.log('have access to plugin instance as this', this);
