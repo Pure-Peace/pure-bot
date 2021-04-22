@@ -111,8 +111,8 @@ export default class BaseBot implements Bot {
       this.platforms.set(symbol, module);
       const instance = this.instances.get(symbol);
 
-      const receiver = await module.receiver.apply(instance);
-      const transmitter = await module.transmitter.apply(instance);
+      const receiver = await module.receiver.apply(instance, [this]);
+      const transmitter = await module.transmitter.apply(instance, [this]);
       this.receivers.set(symbol, receiver);
       this.transmitters.set(symbol, transmitter);
 
@@ -148,7 +148,7 @@ export default class BaseBot implements Bot {
   async #installFilter (module: Module.Filter, symbol: Symbol) {
       const instance = this.instances.get(symbol);
       if (!module.filter) return;
-      this.filters.set(symbol, module.filter.bind(instance));
+      this.filters.set(symbol, module.filter.bind(instance, this));
   }
 
   // @ts-expect-error: private function not supported yet but it works
@@ -205,7 +205,7 @@ export default class BaseBot implements Bot {
   #installPluginMiddleware (symbol: Symbol) {
       const plugin = this.plugins.get(symbol);
       const instance = this.instances.get(symbol);
-      const middleware = plugin.handle.apply(instance);
+      const middleware = plugin.handle.apply(instance, [this]);
       this.middlewares.set(symbol, middleware);
       this.#updateMiddlewareChain();
   }
