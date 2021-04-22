@@ -148,7 +148,7 @@ export default class BaseBot implements Bot {
   async #installFilter (module: Module.Filter, symbol: Symbol) {
       const instance = this.instances.get(symbol);
       if (!module.filter) return;
-      this.filters.set(symbol, module.filter.bind(instance, this));
+      this.filters.set(symbol, module.filter.bind(instance));
   }
 
   // @ts-expect-error: private function not supported yet but it works

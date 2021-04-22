@@ -1,0 +1,17 @@
+{
+  "name": "pure-platform-koishi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "koishi": "^3.9.1"
+  },
+  "peerDependencies": {
+    "koishi-adapter-onebot": "^3.0.8"
+  }
+}

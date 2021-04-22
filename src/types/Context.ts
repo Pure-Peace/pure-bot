@@ -23,6 +23,7 @@ export namespace Context {
      * Module could append additional information to Sender and accessable as target in Module.Transmitter.send()
      */
     export type Sender = {
+      scope?: Scope
       name?: string;
       id:
         | string

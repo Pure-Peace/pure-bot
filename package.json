@@ -58,6 +58,7 @@
   },
   "workspaces": [
     "src/packages/utils/chain-of-responsibility",
-    "src/packages/platforms/irc"
+    "src/packages/platforms/irc",
+    "src/packages/platforms/koishi"
   ]
 }

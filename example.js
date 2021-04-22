@@ -10,10 +10,11 @@ nodemon({
     restartable: 'rs',
     ignore: [
         '.git',
-        'node_modules/**/node_modules'
+        '**/node_modules',
+        'dist'
     ],
-    verbose: false,
-    exec: `tsc --build && node ./dist/src/examples/${target} ${args}`,
+    verbose: true,
+    exec: `tsc && node --enable-source-maps ./dist/src/examples/${target} ${args}`,
     watch: [
         '.'
     ],

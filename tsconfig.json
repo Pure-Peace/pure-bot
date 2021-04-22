@@ -13,18 +13,19 @@
     "noImplicitAny": false,
     "outDir": "./dist",
     "removeComments": false,
-    "sourceMap": false,
+    "sourceMap": true,
     "target": "ESNext",
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "platform/*": ["packages/platforms/*"]
     },
-    "lib": ["es2020", "DOM"]
+    "lib": ["es2020", "DOM"],
+    "skipLibCheck": true
   },
   "exclude": [
     "unused",
     "dist",
-    "node_modules",
+    "**/node_modules",
     "bower_components",
     "jspm_packages"
   ]

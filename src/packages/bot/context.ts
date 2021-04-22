@@ -25,14 +25,9 @@ export default function createContext (bot: Bot, event: Module.Event, symbol: Sy
     const platformFeatures: Module.Features = bot.platformFeatures.get(symbol) as Module.Features;
     const platform: Module.Platform = bot.platforms.get(symbol);
     const platformName: string[] = (event.platform && [event.platform]) || Array.isArray(platform.platform) ? platform.platform as string[] : [platform.platform] as string[];
-    const source: Context.Source.Interface = {
-        sender: event.source.sender,
-        channel: event.source.channel,
-        group: event.source.group
-    };
+    const source: Context.Source.Interface = event.source;
     const copiedEvent: Module.Event = {
-        ...event,
-        source
+        ...event
     } as Module.Event;
     const mixin: object = {
         [event.type]: copiedEvent[event.type],
@@ -45,7 +40,9 @@ export default function createContext (bot: Bot, event: Module.Event, symbol: Sy
         obj[p] = mixin;
         return obj;
     }, {});
-    const send = async (message: Context.Message | Context.Message[]) => transmitter.send(event.source.channel || event.source.sender, message);
+    const target = source.group ?? source.channel ?? source.sender;
+    target.scope = event.scope;
+    const send = async (message: Context.Message | Context.Message[]) => transmitter.send(source.channel || source.sender, message);
     const quote = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { quote: source.sender }));
     const notify = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { notify: source.sender }));
     return {
