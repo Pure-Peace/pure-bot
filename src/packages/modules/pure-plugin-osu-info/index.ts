@@ -1,11 +1,13 @@
+import { createChain } from '../../../packages/utils/chain-of-responsibility';
+
+// const { createChain } = require('chain-of-responsibility');
 const { Cluster } = require('puppeteer-cluster');
-// const { unescapeSpecialChars, wait } = require('./utils');
 
 const defaultOptions = {
     base: 'https://info.osustuff.ri.mk/cn'
 };
 
-module.exports = {
+export default {
     name: 'pure-plugin-osu-info',
     async instance (options) {
         const cluster = await Cluster.launch({
@@ -17,7 +19,7 @@ module.exports = {
 
         cluster.task(async ({ page, data: { url, ctx } }) => {
             console.log(url);
-            await page.setViewport(VIEWPORT);
+            // await page.setViewport(VIEWPORT);
             await page.goto(url, {
                 waitUntil: 'networkidle0'
             });
@@ -29,9 +31,9 @@ module.exports = {
             });
             // Store screenshot, do something else
             // const cqcode = `[CQ:image,file=base64://${screen}]`;
-            meta.quote({
+            ctx.quote({
                 image: {
-                    file: `base64://${screen}`
+                    url: `base64://${screen}`
                 }
             }).catch(err => console.warn(err));
         });
@@ -51,21 +53,20 @@ module.exports = {
             cluster
         };
     },
-    create () {
-        // return array of middlewares should be acceptable
-        return [
-            (ctx, next) => {
+    handle () {
+        const chain = createChain([
+            async (ctx, next) => {
                 if (!ctx.message) return next(); // not a message event
 
-                if (!ctx.message.text?.startsWith('!!pr') && !ctx.message.text?.startsWith('!!recent')) return next();
+                if (!ctx.message.text?.startsWith('~~pr') && !ctx.message.text?.startsWith('~~recent')) return next();
                 let mode;
                 const command = ctx.message.text.split(' ');
-                const username = ctx.database?.user?.osu?.id || unescapeSpecialChars(command.slice(1).join(' ').trim());
-                if (!username) return meta.reply('提供一下用户名。 !!pr(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!pr arily, !!pr@mania arily');
+                const username = ctx.database?.user?.osu?.id || command.slice(1).join(' ').trim();
+                if (!username) return ctx.quote('提供一下用户名。 !!pr(@模式:[osu, taiko, fruits, mania]) osuid\nex: !!pr arily, !!pr@mania arily');
 
                 if (!command[0].includes('@')) mode = undefined;
                 mode = command[0].split('@')[1];
-                if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return meta.reply(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`);
+                if (!['osu', 'taiko', 'fruits', 'mania', undefined].includes(mode)) return ctx.quote(`模式有 osu, taiko, fruits, mania. ${mode}不在其中。`);
 
                 await this.cluster.execute({
                     url: `${this.options.base}/recent/${username}/${mode || ''}`,
@@ -78,7 +79,7 @@ module.exports = {
                 if (!ctx.message.text?.startsWith('!!bind')) return next();
 
                 const command = ctx.message.text.split(' ');
-                const username = ctx.database?.user?.osu?.id || unescapeSpecialChars(command.slice(1).join(' ').trim());
+                const username = ctx.database?.user?.osu?.id || command.slice(1).join(' ').trim();
 
                 ctx.database.user?.bindOsuUser(username)
                     .then(() => {
@@ -99,7 +100,8 @@ module.exports = {
                         ]);
                     });
             }
-        ];
+        ]);
+        return async (ctx, next) => await chain(ctx) ? next() : undefined;
     },
     database: {
         fields: {
@@ -111,12 +113,12 @@ module.exports = {
         },
         methods: {
             user: {
-                async bindOsuUser (doc, osuid) {
-                    const apiUser = await axios.get(`osu-api/users/${osuid}`).then(res => res.data);
-                    if (!apiUser.id) throw new Error('user not exists');
-                    doc.osu = apiUser;
-                    return apiUser;
-                }
+                // async bindOsuUser (doc, osuid) {
+                //     const apiUser = await axios.get(`osu-api/users/${osuid}`).then(res => res.data);
+                //     if (!apiUser.id) throw new Error('user not exists');
+                //     doc.osu = apiUser;
+                //     return apiUser;
+                // }
             }
         },
         extend: {

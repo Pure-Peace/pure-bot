@@ -43,7 +43,7 @@ export default function createContext (bot: Bot, event: Module.Event, symbol: Sy
     const target = source.group ?? source.channel ?? source.sender;
     target.scope = event.scope;
     const send = async (message: Context.Message | Context.Message[]) => transmitter.send(source.channel || source.sender, message);
-    const quote = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { quote: source.sender }));
+    const quote = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { quote: { id: event.id } }));
     const notify = async (message: Context.Message | Context.Message[]) => send(messageMixin(message, { notify: source.sender }));
     return {
         id: copiedEvent.id,

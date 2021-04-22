@@ -1,28 +1,22 @@
-const createChain = (processors) => {
-    const onMessage = async (...args) => {
-        const tempMiddlewares = [];
+export const createChain = (processors) => async (...args) => {
+    const tempMiddlewares = [];
 
-        await processors.reduce(async (next, middleware, index) => {
-            next = await next;
-            if (!next) return;
-            next = false;
-            const nextFunction = (processorOrCommand) => {
-                next = true;
-                if (typeof processorOrCommand === 'function') {
-                    tempMiddlewares.push(processorOrCommand);
-                }
-            };
-            await middleware(...args, nextFunction);
-            return next;
-        }, true);
+    const lastResult = await processors.reduce(async (next, middleware, index) => {
+        next = await next;
+        if (!next) return;
+        next = false;
+        const nextFunction = (processorOrCommand) => {
+            next = true;
+            if (typeof processorOrCommand === 'function') {
+                tempMiddlewares.push(processorOrCommand);
+            }
+        };
+        await middleware(...args, nextFunction);
+        return next;
+    }, true);
+    if (!lastResult) return lastResult;
+    if (!tempMiddlewares.length) return lastResult;
+    const tempMiddlewareChain = createChain(tempMiddlewares);
 
-        if (!tempMiddlewares.length) return;
-        const tempMiddlewareChain = createChain(tempMiddlewares);
-
-        await tempMiddlewareChain(...args);
-    };
-
-    return onMessage;
+    return await tempMiddlewareChain(...args);
 };
-
-export { createChain };

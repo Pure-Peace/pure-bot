@@ -59,6 +59,7 @@
   "workspaces": [
     "src/packages/utils/chain-of-responsibility",
     "src/packages/platforms/irc",
-    "src/packages/platforms/koishi"
+    "src/packages/platforms/koishi",
+    "src/packages/modules/pure-plugin-osu-info"
   ]
 }

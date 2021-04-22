@@ -1,10 +1,11 @@
 import koishi from '../../packages/platforms/koishi';
 import Bot from '../../packages/bot';
 import ModuleBuilder from '../../packages/utils/module-builder';
+import osuInfo from '../../packages/modules/pure-plugin-osu-info';
 import { Context } from 'types';
 const dev = [];
 const filter = new ModuleBuilder().filter((context: Context.All) => {
-    if (!dev.includes(context.source.sender.id)) return false;
+    if (dev.includes(context.source.sender.id.toString())) return true;
     // if (context.private?.message) context.send('your message got filtered');
     return false;
 }).export();
@@ -31,10 +32,11 @@ const filter = new ModuleBuilder().filter((context: Context.All) => {
     bot.reuse(koishi, platformInstance);
     manager.reuse(koishi, platformInstance);
 
-    await bot.use(new ModuleBuilder().handle(() => (context) => context.message && context.send(['收到消息:', context.message.text])).export());
+    await bot.use(new ModuleBuilder().handle(() => (context, next) => context.message && context.send(['收到消息:', context.message.text]) && next()).export());
+    await bot.use(osuInfo);
 
-    let filterSymbol = await bot.use(filter);
-    let filterInstance;
+    await bot.use(filter);
+    // let filterInstance;
     manager.use({
         instance: () => ({
             allow: false
@@ -43,11 +45,11 @@ const filter = new ModuleBuilder().filter((context: Context.All) => {
             return async (context, next) => {
                 const isManager = context.source?.sender?.id === '879724291';
                 if (!isManager) return next();
-                if (context.message.text === '!switch') {
-                    this.switched ? filterSymbol = await bot.reuse(filter, filterInstance) : filterInstance = await bot.remove(filterSymbol);
-                    this.switched = !this.switched;
-                    context.send(['bot:', this.switched ? 'active' : 'disabled']);
-                }
+                // if (context.message.text === '!switch') {
+                //     this.switched ? filterSymbol = await bot.reuse(filter, filterInstance) : filterInstance = await bot.remove(filterSymbol);
+                //     this.switched = !this.switched;
+                //     context.send(['bot:', this.switched ? 'active' : 'disabled']);
+                // }
                 if (context.message.text.startsWith('!dev')) {
                     const id = context.message.text.slice(4).trim();
                     if (!id) return context.send(['current tester: ', dev.join(', ')]);

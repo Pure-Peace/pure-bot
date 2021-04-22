@@ -16,9 +16,6 @@
     "sourceMap": true,
     "target": "ESNext",
     "typeRoots": ["node_modules/@types"],
-    "paths": {
-      "platform/*": ["packages/platforms/*"]
-    },
     "lib": ["es2020", "DOM"],
     "skipLibCheck": true
   },
