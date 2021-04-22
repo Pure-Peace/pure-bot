@@ -1,4 +1,4 @@
-import platform from '../../packages/platforms/irc';
+import irc from '../../packages/platforms/irc';
 import Bot from '../../packages/bot';
 import ModuleBuilder from '../../packages/utils/module-builder';
 import { Context } from 'types';
@@ -10,7 +10,7 @@ const filter = new ModuleBuilder().filter((context: Context.All) => {
     return false;
 }).export();
 (async () => {
-    const ircInstance = await platform.instance({
+    const ircInstance = await irc.instance({
         host: '47.243.59.11',
         nickname: 'arilychan',
         username: 'arilychan',
@@ -23,8 +23,8 @@ const filter = new ModuleBuilder().filter((context: Context.All) => {
 
     const bot = new Bot({});
     const manager = new Bot({});
-    bot.reuse(platform, ircInstance);
-    manager.reuse(platform, ircInstance);
+    bot.reuse(irc, ircInstance);
+    manager.reuse(irc, ircInstance);
 
     await bot.use(new ModuleBuilder().handle(() => (context) => context.message && context.send(['收到消息:', context.message.text])).export());
 
