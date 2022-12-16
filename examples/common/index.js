@@ -78,7 +78,7 @@ bot.onMessage('private', async (ctx) => {
         bot.info('before checker');
 
         // 如果发送消息的qq不等于xx，则拒绝处理
-        if (ctx.user_id !== 940857703) {
+        if (ctx.user_id !== 123456) {
             console.log('拒绝！');
             return false;
         }
